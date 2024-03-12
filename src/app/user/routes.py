@@ -1,10 +1,10 @@
-def upload_image():
+def upload_image() -> str:
     pass
 
 
-def process_image():
+def process_image() -> str:
     pass
 
 
-def download_results():
+def download_results() -> str:
     pass

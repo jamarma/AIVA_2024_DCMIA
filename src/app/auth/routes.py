@@ -1,10 +1,10 @@
-def login():
+def login() -> str:
     pass
 
 
-def logout():
+def logout() -> str:
     pass
 
 
-def signup():
+def signup() -> str:
     pass
