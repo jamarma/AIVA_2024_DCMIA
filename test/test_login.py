@@ -13,7 +13,7 @@ class TestLogin(unittest.TestCase):
         self.assertTrue(self.user.verify_password("password1"))
 
     def test_login_failed_incorrect_password(self):
-        self.assertTrue(self.user.verify_password("wrong_password"))
+        self.assertFalse(self.user.verify_password("wrong_password"))
 
 
 if __name__ == '__main__':
