@@ -1,4 +1,4 @@
-class HomeDetector:
+class HouseDetector:
     def __init__(self):
         pass
 

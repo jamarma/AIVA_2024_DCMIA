@@ -1,13 +1,13 @@
 import unittest
 import numpy as np
 
-from src.app.user.home_detector import HomeDetector
+from src.app.user.house_detector import HouseDetector
 
 
-class TestLogin(unittest.TestCase):
+class TestHouseDetector(unittest.TestCase):
 
     def setUp(self):
-        self.detector = HomeDetector()
+        self.detector = HouseDetector()
 
     def test_predict_returns_list_of_tuples(self):
         image = "test/data/input_example.png"
