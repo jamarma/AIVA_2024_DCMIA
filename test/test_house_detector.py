@@ -1,5 +1,6 @@
 import unittest
 import numpy as np
+import cv2 as cv
 
 from src.app.user.house_detector import HouseDetector
 
@@ -17,6 +18,8 @@ class TestHouseDetector(unittest.TestCase):
 
         for bbox, score in result:
             self.assertIsInstance(bbox, np.ndarray)
+            for coord in bbox:
+                self.assertIsInstance(coord, float)
             self.assertIsInstance(score, float)
 
     def test_predict_returns_correct_format(self):
@@ -33,6 +36,20 @@ class TestHouseDetector(unittest.TestCase):
         result = self.detector.predict(empty_image)
 
         self.assertEqual(len(result), 0)
+
+    def test_predict_coordinates_within_image_size(self):
+        image = "test/data/input_example.png"
+        result = self.detector.predict(image)
+
+        for bbox, _ in result:
+            img_height, img_width, _ = cv.imread(image).shape
+
+            for coord in bbox:
+                self.assertGreaterEqual(coord, 0)
+                if coord % 2 == 0:
+                    self.assertLessEqual(coord, img_width)
+                else:
+                    self.assertLessEqual(coord, img_height)
 
 
 if __name__ == '__main__':
