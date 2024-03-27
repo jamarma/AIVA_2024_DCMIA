@@ -6,9 +6,11 @@ from natsort import natsorted
 from sklearn.model_selection import train_test_split
 from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom.minidom import parseString
+from tqdm import tqdm
 
 TRAIN_DIR = '../data/train/'
 TEST_DIR = '../data/test/'
+VAL_DIR = '../data/val/'
 
 
 def crop_patches(images_path: str, masks_path: str, patch_size: int) -> ([np.array], [np.array]):
@@ -53,7 +55,7 @@ def crop_patches(images_path: str, masks_path: str, patch_size: int) -> ([np.arr
     return img_patches, mask_patches
 
 
-def generate_pascal_voc_xml(filename: str, shape_image: (int, int, int), bounding_boxes: [(int, int, int, int)], classes: [str]):
+def generate_pascal_voc_xml(filename: str, shape_image: (int, int, int), bounding_boxes: [(int, int, int, int)], classes: [str]) -> str:
     """
     Generates a Pascal VOC xml format string with the given bounding
     box and classes of the detections in an image.
@@ -152,19 +154,19 @@ def get_bounding_boxes(mask: np.array) -> ([(int, int, int, int)], [str]):
     return bounding_boxes, classes
 
 
-def save_annotations_by_indices(img_patches: [np.array], mask_patches: [np.array], indices: [int], output_path: str):
+def save_patches_and_annotations_by_indices(img_patches: [np.array], mask_patches: [np.array], indices: [int], output_path: str):
     """
     Saves the patches in png format and the bounding boxes of each patch in
     Pascal VOC format in the output path provided. An index list is provided
     indicating which patches from the patch list should be saved.
 
     - Parameters:
-        - img_patches (np.array): list of image patches.
-        - mask_patches (np.array): list of mask patches.
+        - img_patches ([np.array]): list of image patches.
+        - mask_patches ([np.array]): list of mask patches.
         - indices ([int]): index list to select patches from the lists.
         - output_path (str): output path to save patches and annotations.
     """
-    for idx in indices:
+    for idx in tqdm(indices, desc=f'Saving to {output_path}'):
         img_patch = img_patches[idx]
         mask_patch = mask_patches[idx]
         bboxs, classes = get_bounding_boxes(mask_patch)
@@ -175,30 +177,46 @@ def save_annotations_by_indices(img_patches: [np.array], mask_patches: [np.array
         cv2.imwrite(os.path.join(output_path, filename), img_patch)
 
 
-def save_patches_and_annotations(img_patches: [np.array], mask_patches: [np.array], test_size: float):
+def train_test_val_split(data: [np.array], train_size: float, test_size: float, val_size: float) -> ([int], [int], [int]):
     """
-    Divide the patches into training and test set. Save the patches in png
-    format and the annotations (bounding box) of each patch in Pascal VOC
-    format.
+    Divides the input data into train, test and validation. Returns the data
+    list indices for each split.
 
-    - Parameters:
-        - img_patches (np.array): list of image patches.
-        - mask_patches (np.array): list of mask patches.
+    Parameters:
+        - data ([np.array]): data to split.
+        - train_size (float): should be between 0.0 and 1.0 and represent the
+            proportion of the dataset to include in the train split.
         - test_size (float): should be between 0.0 and 1.0 and represent the
-        proportion of the dataset to include in the test split.
-    """
-    train_indices, test_indices = train_test_split(range(len(img_patches)), test_size=test_size)
+            proportion of the dataset to include in the test split.
+        - val_size (float): should be between 0.0 and 1.0 and represent the
+            proportion of the dataset to include in the validation split.
 
+    Returns:
+        - train_indices ([int]): indices of data train split
+        - test_indices ([int]): indices of data test split
+        - val_indices ([int]): indices of data validation split
+    """
+    if (train_size + test_size + val_size) != 1:
+        raise ValueError('The sum of train, test and validation sizes must be 1')
+    train_indices, test_indices = train_test_split(range(len(data)), test_size=1-train_size)
+    val_indices, test_indices = train_test_split(test_indices, test_size=test_size/(test_size + val_size))
+    return train_indices, test_indices, val_indices
+
+
+if '__main__' == __name__:
+    img_patches, mask_patches = crop_patches('../data/raw/images',
+                                             '../data/raw/masks',
+                                             500)
+    train_indices, test_indices, val_indices = train_test_val_split(img_patches,
+                                                                    train_size=0.7,
+                                                                    test_size=0.15,
+                                                                    val_size=0.15)
     os.makedirs(TRAIN_DIR, exist_ok=True)
     os.makedirs(TEST_DIR, exist_ok=True)
-
-    save_annotations_by_indices(img_patches, mask_patches, train_indices, TRAIN_DIR)
-    save_annotations_by_indices(img_patches, mask_patches, test_indices, TEST_DIR)
-
-
-img_patches, mask_patches = crop_patches('../data/raw/images',
-                                         '../data/raw/masks',
-                                         500)
-save_patches_and_annotations(img_patches, mask_patches, test_size=0.2)
-
-
+    os.makedirs(VAL_DIR, exist_ok=True)
+    save_patches_and_annotations_by_indices(img_patches, mask_patches,
+                                            train_indices, TRAIN_DIR)
+    save_patches_and_annotations_by_indices(img_patches, mask_patches,
+                                            test_indices, TEST_DIR)
+    save_patches_and_annotations_by_indices(img_patches, mask_patches,
+                                            val_indices, VAL_DIR)
