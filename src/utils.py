@@ -1,7 +1,7 @@
 import cv2
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
-
+import torch
 from constants import (
     CLASSES
 )
@@ -44,3 +44,32 @@ def visualize_dataset_sample(image, target):
         )
     cv2.imshow('Image', image_arr)
     cv2.waitKey(0)
+
+
+def save_model(epoch, model, optimizer):
+    torch.save({
+                'epoch': epoch+1,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                }, 'outputs/last_model.pth')
+
+
+class Averager:
+    def __init__(self):
+        self.current_total = 0.0
+        self.iterations = 0.0
+
+    def send(self, value):
+        self.current_total += value
+        self.iterations += 1
+
+    @property
+    def value(self):
+        if self.iterations == 0:
+            return 0
+        else:
+            return 1.0 * self.current_total / self.iterations
+
+    def reset(self):
+        self.current_total = 0.0
+        self.iterations = 0.0

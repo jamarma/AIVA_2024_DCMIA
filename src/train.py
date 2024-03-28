@@ -5,7 +5,7 @@ from constants import (
     CLASSES, TRAIN_DIR, TEST_DIR
 )
 from houses_dataset import HousesDataset
-
+import torch
 
 train_dataset = HousesDataset(TRAIN_DIR, CLASSES, transforms=utils.get_train_transform())
 test_dataset = HousesDataset(TEST_DIR, CLASSES, transforms=utils.get_test_transform())
@@ -23,5 +23,5 @@ test_loader = DataLoader(
 )
 
 print(f"Number of training samples: {len(train_dataset)}")
-image, target = train_dataset[10]
+image, target = train_dataset[28]
 utils.visualize_dataset_sample(image, target)
