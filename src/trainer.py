@@ -9,7 +9,7 @@ import time
 from torch.utils.data import DataLoader
 import utils
 from constants import (
-    CLASSES, TRAIN_DIR, TEST_DIR
+    CLASSES, TRAIN_DIR, VAL_DIR, TEST_DIR
 )
 
 plt.style.use('ggplot')
@@ -17,7 +17,7 @@ plt.style.use('ggplot')
 DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 NUM_CLASSES = 1
 NUM_EPOCHS = 10
-OUT_DIR = "output"
+OUT_DIR = "src/output"
 
 
 def train(train_data_loader, model):
@@ -76,17 +76,25 @@ def validate(valid_data_loader, model):
 
 if __name__ == '__main__':
     train_dataset = HousesDataset(TRAIN_DIR, CLASSES, transforms=utils.get_train_transform())
+    val_dataset = HousesDataset(VAL_DIR, CLASSES, transforms=utils.get_test_transform())
     test_dataset = HousesDataset(TEST_DIR, CLASSES, transforms=utils.get_test_transform())
     train_loader = DataLoader(
         train_dataset,
-        batch_size=1,
+        batch_size=10,
+        shuffle=True,
+        num_workers=0,
+        collate_fn = utils.collate_fn
+    )
+    val_loader = DataLoader(
+        val_dataset,
+        batch_size=10,
         shuffle=True,
         num_workers=0,
         collate_fn=utils.collate_fn
     )
     test_loader = DataLoader(
         test_dataset,
-        batch_size=1,
+        batch_size=10,
         shuffle=True,
         num_workers=0,
         collate_fn=utils.collate_fn
@@ -120,7 +128,7 @@ if __name__ == '__main__':
         # start timer and carry out training and validation
         start = time.time()
         train_loss = train(train_loader, model)
-        val_loss = validate(test_loader, model)
+        val_loss = validate(val_loader, model)
         print(f"Epoch #{epoch + 1} train loss: {train_loss_hist.value:.3f}")
         print(f"Epoch #{epoch + 1} validation loss: {val_loss_hist.value:.3f}")
         end = time.time()
