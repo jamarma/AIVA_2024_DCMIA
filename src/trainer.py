@@ -1,4 +1,4 @@
-from house_detector import ModelFactory
+"""from house_detector import ModelFactory
 from houses_dataset import HousesDataset
 from utils import Averager, save_model
 from tqdm.auto import tqdm
@@ -35,6 +35,7 @@ def train(train_data_loader, model):
         targets = [{k: v.to(DEVICE) for k, v in t.items()} for t in targets]
         # targets = [{k: v.to(DEVICE) for k, v in targets.items()}]
         loss_dict = model(images, targets)
+        print(loss_dict)
         losses = sum(loss for loss in loss_dict.values())
         loss_value = losses.item()
         train_loss_list.append(loss_value)
@@ -136,4 +137,98 @@ if __name__ == '__main__':
         # save the current epoch model
         save_model(epoch, model, optimizer)
         # sleep for 5 seconds after each epoch
-        time.sleep(5)
+        time.sleep(5)"""
+
+
+from houses_dataset import HousesDataset
+import torch
+from house_detector import ModelFactory
+from torch.utils.data import DataLoader
+import utils
+from constants import (
+    CLASSES, TRAIN_DIR, VAL_DIR, TEST_DIR
+)
+from engine import train_one_epoch, evaluate
+
+train_dataset = HousesDataset(TRAIN_DIR, CLASSES, transforms=utils.get_train_transform())
+val_dataset = HousesDataset(VAL_DIR, CLASSES, transforms=utils.get_test_transform())
+test_dataset = HousesDataset(TEST_DIR, CLASSES, transforms=utils.get_test_transform())
+train_loader = DataLoader(
+    train_dataset,
+    batch_size=10,
+    shuffle=True,
+    num_workers=0,
+    collate_fn=utils.collate_fn
+)
+val_loader = DataLoader(
+    val_dataset,
+    batch_size=10,
+    shuffle=True,
+    num_workers=0,
+    collate_fn=utils.collate_fn
+)
+test_loader = DataLoader(
+    test_dataset,
+    batch_size=10,
+    shuffle=True,
+    num_workers=0,
+    collate_fn=utils.collate_fn
+)
+
+# train on the GPU or on the CPU, if a GPU is not available
+device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+
+# our dataset has two classes only - background and person
+num_classes = 1
+
+"""# define training and validation data loaders
+data_loader = torch.utils.data.DataLoader(
+    train_dataset,
+    batch_size=2,
+    shuffle=True,
+    num_workers=0,
+    collate_fn=utils.collate_fn
+)
+
+data_loader_test = torch.utils.data.DataLoader(
+    test_dataset,
+    batch_size=1,
+    shuffle=False,
+    num_workers=0,
+    collate_fn=utils.collate_fn
+)"""
+
+# get the model using our helper function
+model = ModelFactory.create_model(num_classes)
+
+# move model to the right device
+model.to(device)
+
+# construct an optimizer
+params = [p for p in model.parameters() if p.requires_grad]
+optimizer = torch.optim.SGD(
+    params,
+    lr=0.001,
+    momentum=0.5,
+    weight_decay=0.001
+)
+
+# and a learning rate scheduler
+lr_scheduler = torch.optim.lr_scheduler.StepLR(
+    optimizer,
+    step_size=3,
+    gamma=0.1
+)
+
+# let's train it just for 2 epochs
+num_epochs = 3
+
+for epoch in range(num_epochs):
+    # train for one epoch, printing every 10 iterations
+    train_one_epoch(model, optimizer, train_loader, device, epoch, print_freq=10)
+    # update the learning rate
+    lr_scheduler.step()
+    # evaluate on the test dataset
+    evaluate(model, test_loader, device=device)
+
+print("That's it!")
