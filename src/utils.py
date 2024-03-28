@@ -73,3 +73,7 @@ class Averager:
     def reset(self):
         self.current_total = 0.0
         self.iterations = 0.0
+
+
+def collate_fn(batch):
+    return tuple(zip(*batch))

@@ -2,6 +2,7 @@ import glob
 import os
 import cv2
 import torch
+import numpy as np
 from torch.utils.data import Dataset
 from natsort import natsorted
 from xml.etree import ElementTree as et
@@ -38,7 +39,7 @@ class HousesDataset(Dataset):
         """
         # Reads image from path
         image = cv2.imread(self.images_paths[index])
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32)
 
         # Image name and annotations file path
         image_name, _ = os.path.splitext(os.path.basename(self.images_paths[index]))

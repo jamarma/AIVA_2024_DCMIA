@@ -1,5 +1,5 @@
 from house_detector import ModelFactory
-from src.houses_dataset import HousesDataset
+from houses_dataset import HousesDataset
 from utils import Averager, save_model
 from tqdm.auto import tqdm
 import torch
@@ -32,8 +32,8 @@ def train(train_data_loader, model):
         images, targets = data
         # targets = [targets]
         images = list(image.to(DEVICE) for image in images)
-        # targets = [{k: v.to(DEVICE) for k, v in t.items()} for t in targets]
-        targets = [{k: v.to(DEVICE) for k, v in targets.items()}]
+        targets = [{k: v.to(DEVICE) for k, v in t.items()} for t in targets]
+        # targets = [{k: v.to(DEVICE) for k, v in targets.items()}]
         loss_dict = model(images, targets)
         losses = sum(loss for loss in loss_dict.values())
         loss_value = losses.item()
@@ -81,13 +81,15 @@ if __name__ == '__main__':
         train_dataset,
         batch_size=1,
         shuffle=True,
-        num_workers=0
+        num_workers=0,
+        collate_fn=utils.collate_fn
     )
     test_loader = DataLoader(
         test_dataset,
         batch_size=1,
         shuffle=True,
-        num_workers=0
+        num_workers=0,
+        collate_fn=utils.collate_fn
     )
     print(f"Number of training samples: {len(train_dataset)}")
     print(f"Number of validation samples: {len(test_dataset)}\n")
