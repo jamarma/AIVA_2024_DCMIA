@@ -10,8 +10,8 @@ from object_detectors import FasterRCNN, RetinaNet
 from constants import CLASSES, TEST_DATA_PATH
 
 # Test images
-test_dataset = HousesDataset(TEST_DATA_PATH, CLASSES, transforms=utils.get_transform(train=False))
-image, _ = test_dataset[20]
+test_dataset = HousesDataset(TEST_DATA_PATH, CLASSES, transforms=utils.get_transform())
+image, _ = test_dataset[50]
 
 # Loads trained model and makes prediction
 object_detector = FasterRCNN(len(CLASSES))
