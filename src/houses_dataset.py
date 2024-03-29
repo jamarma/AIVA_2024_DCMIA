@@ -1,9 +1,10 @@
 import glob
 import os
-import cv2
 import torch
-import numpy as np
 from torch.utils.data import Dataset
+from torchvision import tv_tensors
+from torchvision.transforms.v2 import functional as F
+from torchvision.io import read_image
 from natsort import natsorted
 from xml.etree import ElementTree as et
 
@@ -38,8 +39,7 @@ class HousesDataset(Dataset):
             information.
         """
         # Reads image from path
-        image = cv2.imread(self.images_paths[index])
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32)
+        image = read_image(self.images_paths[index])
 
         # Image name and annotations file path
         image_name, _ = os.path.splitext(os.path.basename(self.images_paths[index]))
@@ -59,20 +59,17 @@ class HousesDataset(Dataset):
             boxes.append([xmin, ymin, xmax, ymax])
 
         # Prepares the output target
+        image = tv_tensors.Image(image)
         boxes = torch.as_tensor(boxes, dtype=torch.float32)
         target = {}
-        target["boxes"] = boxes
+        target["boxes"] = tv_tensors.BoundingBoxes(boxes, format="XYXY", canvas_size=F.get_size(image))
         target["labels"] = torch.as_tensor(labels, dtype=torch.int64)
         target["area"] = (boxes[:, 3] - boxes[:, 1]) * (boxes[:, 2] - boxes[:, 0])
         target["iscrowd"] = torch.zeros((boxes.shape[0],), dtype=torch.int64)
-        target["image_id"] = torch.tensor([index])
+        target["image_id"] = index
 
         # Applies transforms
         if self.transforms is not None:
-            sample = self.transforms(image=image,
-                                     bboxes=target['boxes'],
-                                     labels=labels)
-            image = sample['image']
-            target['boxes'] = torch.Tensor(sample['bboxes'])
+            image, target = self.transforms(image, target)
 
         return image, target
