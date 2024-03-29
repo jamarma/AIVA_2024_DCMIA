@@ -1,27 +1,20 @@
 from torch.utils.data import DataLoader
-
-import utils
-from constants import (
-    CLASSES, TRAIN_DIR, TEST_DIR
-)
 from houses_dataset import HousesDataset
-import torch
+import utils
 
-train_dataset = HousesDataset(TRAIN_DIR, CLASSES, transforms=utils.get_train_transform())
-test_dataset = HousesDataset(TEST_DIR, CLASSES, transforms=utils.get_test_transform())
-train_loader = DataLoader(
-    train_dataset,
-    batch_size=1,
-    shuffle=True,
-    num_workers=0
-)
-test_loader = DataLoader(
-    test_dataset,
-    batch_size=1,
-    shuffle=True,
-    num_workers=0
-)
+from constants import (CLASSES, TRAIN_DATA_PATH, VAL_DATA_PATH, TEST_DATA_PATH,
+                       BATCH_SIZE, EPOCHS, LEARNING_RATE)
+from object_detectors import FasterRCNN
 
-print(f"Number of training samples: {len(train_dataset)}")
-image, target = train_dataset[28]
-utils.visualize_dataset_sample(image, target)
+if __name__ == "__main__":
+    # Loads train and validation data
+    train_dataset = HousesDataset(TRAIN_DATA_PATH, CLASSES, transforms=utils.get_train_transform())
+    val_dataset = HousesDataset(VAL_DATA_PATH, CLASSES, transforms=utils.get_test_transform())
+    train_data_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0, collate_fn=utils.collate_fn)
+    val_data_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0, collate_fn=utils.collate_fn)
+
+    # Object detector training
+    object_detector = FasterRCNN(train_data_loader, val_data_loader, len(CLASSES))
+    object_detector.train(num_epochs=EPOCHS, lr=LEARNING_RATE)
+    object_detector.save_model('model1.pth')
+
