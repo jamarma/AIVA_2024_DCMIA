@@ -7,7 +7,9 @@ from abc import ABC, abstractmethod
 
 from torchvision_sources.engine import train_one_epoch, evaluate
 import constants
-
+from functools import partial
+from torchvision.models.detection import RetinaNet_ResNet50_FPN_V2_Weights
+from torchvision.models.detection.retinanet import RetinaNetClassificationHead
 
 class ObjectDetector(ABC):
     def __init__(self, train_data_loader, val_data_loader, num_classes):
@@ -78,3 +80,23 @@ class FasterRCNN(ObjectDetector):
         return model
 
 
+class Retinanet(ObjectDetector):
+    def __init__(self, train_data_loader, val_data_loader, num_classes):
+        super().__init__(
+            train_data_loader,
+            val_data_loader,
+            num_classes
+        )
+
+    @staticmethod
+    def _model_instance(num_classes: int):
+        model = torchvision.models.detection.retinanet_resnet50_fpn_v2(weights=RetinaNet_ResNet50_FPN_V2_Weights.COCO_V1)
+
+        num_anchors = model.head.classification_head.num_anchors
+        model.head.classification_head = RetinaNetClassificationHead(
+            in_channels=256,
+            num_anchors=num_anchors,
+            num_classes=num_classes,
+            norm_layer=partial(torch.nn.GroupNorm, 32)
+        )
+        return model
