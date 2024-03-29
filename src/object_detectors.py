@@ -8,26 +8,42 @@ from torchvision.models.detection import RetinaNet_ResNet50_FPN_V2_Weights
 from torchvision.models.detection.retinanet import RetinaNetClassificationHead
 from torchvision.models.detection.fcos import FCOSClassificationHead
 from abc import ABC, abstractmethod
+from typing import Tuple
 
 from torchvision_sources.engine import train_one_epoch, evaluate
 import constants
 
 
 class ObjectDetector(ABC):
-    def __init__(self, num_classes, train_data_loader=None, val_data_loader=None):
+    def __init__(self, num_classes: int, train_data_loader=None, val_data_loader=None) -> None:
+        """
+        Initializes the ObjectDetector.
+
+        Parameters:
+            - num_classes (int): Number of classes for detection.
+            - train_data_loader: DataLoader for training data.
+            - val_data_loader: DataLoader for validation data.
+        """
         self.model = self._model_instance(num_classes)
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
         self.model.to(self.device)
         self.train_data_loader = train_data_loader
         self.val_data_loader = val_data_loader
 
-    def train(self, num_epochs, lr):
+    def train(self, num_epochs: int, lr: float) -> None:
+        """
+        Trains the object detection model.
+
+        Parameters:
+            - num_epochs (int): Number of epochs for training.
+            - lr (float): Learning rate for training.
+        """
         self.model.train()
         params = [p for p in self.model.parameters() if p.requires_grad]
         optimizer = torch.optim.SGD(
             params,
             lr=lr,
-            momentum=0.5,
+            momentum=0.9,
             weight_decay=0.0005
         )
         lr_scheduler = torch.optim.lr_scheduler.StepLR(
@@ -43,7 +59,19 @@ class ObjectDetector(ABC):
             # evaluate on the test dataset
             evaluate(self.model, self.val_data_loader, device=self.device)
 
-    def predict(self, image: torch.Tensor, threshold: float = 0.6):
+    def predict(self, image: torch.Tensor, threshold: float = 0.6) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        """
+        Predicts bounding boxes, labels, and scores for given image.
+
+        Parameters:
+            - image (torch.Tensor): Input image tensor.
+            - threshold (float): Detection threshold.
+
+        Returns:
+            - labels (torch.Tensor): Predicted labels.
+            - boxes (torch.Tensor): Predicted bounding boxes.
+            - scores (torch.Tensor): Predicted scores.
+        """
         image = image.to(self.device)
         pred = self.model([image, ])[0]
 
@@ -57,11 +85,23 @@ class ObjectDetector(ABC):
 
         return pred['labels'], pred['boxes'].long(), pred['scores']
 
-    def save_model(self, filename: str):
+    def save_model(self, filename: str) -> None:
+        """
+        Saves the trained model to a file.
+
+        Parameters:
+            - filename (str): Name of the file to save.
+        """
         path = os.path.join(constants.MODELS_PATH, filename)
         torch.save(self.model.state_dict(), path)
 
-    def load_model(self, filename: str):
+    def load_model(self, filename: str) -> None:
+        """
+        Loads a trained model from a file.
+
+        Parameters:
+            - filename (str): Name of the file to load.
+        """
         path = os.path.join(constants.MODELS_PATH, filename)
         self.model.load_state_dict(torch.load(path))
         self.model.eval()
@@ -69,11 +109,28 @@ class ObjectDetector(ABC):
     @staticmethod
     @abstractmethod
     def _model_instance(num_classes: int):
+        """
+        Abstract method to instantiate the specific model.
+
+        Parameters:
+            - num_classes (int): Number of classes for detection.
+
+        Returns:
+            - model: Instance of the specific model.
+        """
         return NotImplemented
 
 
 class FasterRCNN(ObjectDetector):
-    def __init__(self, num_classes, train_data_loader=None, val_data_loader=None):
+    def __init__(self, num_classes: int, train_data_loader=None, val_data_loader=None) -> None:
+        """
+        Initializes the FasterRCNN object detector.
+
+        Parameters:
+            - num_classes (int): Number of classes for detection.
+            - train_data_loader: DataLoader for training data.
+            - val_data_loader: DataLoader for validation data.
+        """
         super().__init__(
             num_classes,
             train_data_loader,
@@ -82,6 +139,15 @@ class FasterRCNN(ObjectDetector):
 
     @staticmethod
     def _model_instance(num_classes: int):
+        """
+        Instantiates the Faster R-CNN model.
+
+        Parameters:
+            - num_classes (int): Number of classes for detection.
+
+        Returns:
+            - model: Faster R-CNN model instance.
+        """
         # load a model pre-trained on COCO
         model = torchvision.models.detection.fasterrcnn_resnet50_fpn(weights="DEFAULT")
 
@@ -94,7 +160,15 @@ class FasterRCNN(ObjectDetector):
 
 
 class RetinaNet(ObjectDetector):
-    def __init__(self, num_classes, train_data_loader=None, val_data_loader=None):
+    def __init__(self, num_classes: int, train_data_loader=None, val_data_loader=None) -> None:
+        """
+        Initializes the RetinaNet object detector.
+
+        Parameters:
+            - num_classes (int): Number of classes for detection.
+            - train_data_loader: DataLoader for training data.
+            - val_data_loader: DataLoader for validation data.
+        """
         super().__init__(
             num_classes,
             train_data_loader,
@@ -103,6 +177,15 @@ class RetinaNet(ObjectDetector):
 
     @staticmethod
     def _model_instance(num_classes: int):
+        """
+        Instantiates the RetinaNet model.
+
+        Parameters:
+            - num_classes (int): Number of classes for detection.
+
+        Returns:
+            - model: RetinaNet model instance.
+        """
         model = torchvision.models.detection.retinanet_resnet50_fpn_v2(weights=RetinaNet_ResNet50_FPN_V2_Weights.COCO_V1)
 
         num_anchors = model.head.classification_head.num_anchors
@@ -116,7 +199,15 @@ class RetinaNet(ObjectDetector):
 
 
 class FCOS(ObjectDetector):
-    def __init__(self, train_data_loader, val_data_loader, num_classes):
+    def __init__(self, train_data_loader, val_data_loader, num_classes: int) -> None:
+        """
+        Initializes the FCOS object detector.
+
+        Parameters:
+            - train_data_loader: DataLoader for training data.
+            - val_data_loader: DataLoader for validation data.
+            - num_classes (int): Number of classes for detection.
+        """
         super().__init__(
             train_data_loader,
             val_data_loader,
@@ -124,7 +215,18 @@ class FCOS(ObjectDetector):
         )
 
     @staticmethod
-    def _model_instance(num_classes: int, min_size=640, max_size=640):
+    def _model_instance(num_classes: int, min_size: int = 640, max_size: int = 640):
+        """
+        Instantiates the FCOS model.
+
+        Parameters:
+            - num_classes (int): Number of classes for detection.
+            - min_size (int): Minimum input size.
+            - max_size (int): Maximum input size.
+
+        Returns:
+            - model: FCOS model instance.
+        """
         model = torchvision.models.detection.fcos_resnet50_fpn(weights='DEFAULT')
         num_anchors = model.head.classification_head.num_anchors
         model.head.classification_head = FCOSClassificationHead(
