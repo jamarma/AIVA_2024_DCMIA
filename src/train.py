@@ -4,7 +4,7 @@ import utils
 
 from constants import (CLASSES, TRAIN_DATA_PATH, VAL_DATA_PATH, TEST_DATA_PATH,
                        BATCH_SIZE, EPOCHS, LEARNING_RATE)
-from object_detectors import FasterRCNN
+from object_detectors import FasterRCNN, Retinanet
 
 if __name__ == "__main__":
     # Loads train and validation data
@@ -14,7 +14,7 @@ if __name__ == "__main__":
     val_data_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0, collate_fn=utils.collate_fn)
 
     # Object detector training
-    object_detector = FasterRCNN(train_data_loader, val_data_loader, len(CLASSES))
+    object_detector = Retinanet(train_data_loader, val_data_loader, len(CLASSES))
     object_detector.train(num_epochs=EPOCHS, lr=LEARNING_RATE)
     object_detector.save_model('model1.pth')
 
