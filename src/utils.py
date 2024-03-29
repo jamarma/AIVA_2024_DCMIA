@@ -10,9 +10,6 @@ def get_transform() -> T.Compose:
     """
     Returns a composition of transformations based on whether it's for training or not.
 
-    Parameters:
-        - train (bool): Indicates whether the transformation is for training or not.
-
     Returns:
         - transforms (T.Compose): Composition of transformations.
     """
