@@ -8,7 +8,7 @@ from object_detectors import FasterRCNN
 
 if __name__ == "__main__":
     # Loads train and validation data
-    train_dataset = HousesDataset(TRAIN_DATA_PATH, CLASSES, transforms=utils.get_transform(train=True))
+    train_dataset = HousesDataset(TRAIN_DATA_PATH, CLASSES, transforms=utils.get_transform(train=False))
     val_dataset = HousesDataset(VAL_DATA_PATH, CLASSES, transforms=utils.get_transform(train=False))
     train_data_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0, collate_fn=utils.collate_fn)
     val_data_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0, collate_fn=utils.collate_fn)

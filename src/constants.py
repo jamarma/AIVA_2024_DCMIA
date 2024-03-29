@@ -10,7 +10,7 @@ VAL_DATA_PATH = os.path.join(DATA_PATH, 'val')
 MODELS_PATH = os.path.join(PROJECT_PATH, 'models')
 
 # Object detection configuration
-CLASSES = ['house']
+CLASSES = ['__background__', 'house']
 BATCH_SIZE = 4
 EPOCHS = 1
 LEARNING_RATE = 0.005
