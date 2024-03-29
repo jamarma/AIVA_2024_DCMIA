@@ -6,6 +6,7 @@ from torchvision.ops import nms
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 from torchvision.models.detection import RetinaNet_ResNet50_FPN_V2_Weights
 from torchvision.models.detection.retinanet import RetinaNetClassificationHead
+from torchvision.models.detection.fcos import FCOSClassificationHead
 from abc import ABC, abstractmethod
 
 from torchvision_sources.engine import train_one_epoch, evaluate
@@ -111,4 +112,29 @@ class RetinaNet(ObjectDetector):
             num_classes=num_classes,
             norm_layer=partial(torch.nn.GroupNorm, 32)
         )
+        return model
+
+
+class FCOS(ObjectDetector):
+    def __init__(self, train_data_loader, val_data_loader, num_classes):
+        super().__init__(
+            train_data_loader,
+            val_data_loader,
+            num_classes
+        )
+
+    @staticmethod
+    def _model_instance(num_classes: int, min_size=640, max_size=640):
+        model = torchvision.models.detection.fcos_resnet50_fpn(weights='DEFAULT')
+        num_anchors = model.head.classification_head.num_anchors
+        model.head.classification_head = FCOSClassificationHead(
+            in_channels=256,
+            num_anchors=num_anchors,
+            num_classes=num_classes,
+            norm_layer=partial(torch.nn.GroupNorm, 32)
+        )
+        model.transform.min_size = (min_size,)
+        model.transform.max_size = max_size
+        for param in model.parameters():
+            param.requires_grad = True
         return model
