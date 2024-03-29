@@ -1,18 +1,19 @@
-import numpy as np
 import torch
 import os
 import torchvision
+from functools import partial
+from torchvision.ops import nms
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
+from torchvision.models.detection import RetinaNet_ResNet50_FPN_V2_Weights
+from torchvision.models.detection.retinanet import RetinaNetClassificationHead
 from abc import ABC, abstractmethod
 
 from torchvision_sources.engine import train_one_epoch, evaluate
 import constants
-from functools import partial
-from torchvision.models.detection import RetinaNet_ResNet50_FPN_V2_Weights
-from torchvision.models.detection.retinanet import RetinaNetClassificationHead
+
 
 class ObjectDetector(ABC):
-    def __init__(self, train_data_loader, val_data_loader, num_classes):
+    def __init__(self, num_classes, train_data_loader=None, val_data_loader=None):
         self.model = self._model_instance(num_classes)
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
         self.model.to(self.device)
@@ -41,8 +42,19 @@ class ObjectDetector(ABC):
             # evaluate on the test dataset
             evaluate(self.model, self.val_data_loader, device=self.device)
 
-    def predict(self, image: np.array):
-        pass
+    def predict(self, image: torch.Tensor, threshold: float = 0.6):
+        image = image.to(self.device)
+        pred = self.model([image, ])[0]
+
+        # Filter pred by threshold
+        mask = pred['scores'] >= threshold
+        pred = {key: value[mask] for key, value in pred.items()}
+
+        # Apply non-maximum suppression to filter overlapping detections
+        keep = nms(pred['boxes'], pred['scores'], iou_threshold=0.2)
+        pred = {key: value[keep] for key, value in pred.items()}
+
+        return pred['labels'], pred['boxes'].long(), pred['scores']
 
     def save_model(self, filename: str):
         path = os.path.join(constants.MODELS_PATH, filename)
@@ -60,11 +72,11 @@ class ObjectDetector(ABC):
 
 
 class FasterRCNN(ObjectDetector):
-    def __init__(self, train_data_loader, val_data_loader, num_classes):
+    def __init__(self, num_classes, train_data_loader=None, val_data_loader=None):
         super().__init__(
+            num_classes,
             train_data_loader,
-            val_data_loader,
-            num_classes
+            val_data_loader
         )
 
     @staticmethod
@@ -80,12 +92,12 @@ class FasterRCNN(ObjectDetector):
         return model
 
 
-class Retinanet(ObjectDetector):
-    def __init__(self, train_data_loader, val_data_loader, num_classes):
+class RetinaNet(ObjectDetector):
+    def __init__(self, num_classes, train_data_loader=None, val_data_loader=None):
         super().__init__(
+            num_classes,
             train_data_loader,
             val_data_loader,
-            num_classes
         )
 
     @staticmethod
