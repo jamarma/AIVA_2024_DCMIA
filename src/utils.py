@@ -92,9 +92,10 @@ import os
 import time
 from collections import defaultdict, deque
 
-import torch
 import torch.distributed as dist
-
+import albumentations as A
+from albumentations.pytorch import ToTensorV2
+import torch
 
 class SmoothedValue:
     """Track a series of values and provide access to smoothed values over a
@@ -368,14 +369,6 @@ def init_distributed_mode(args):
     )
     torch.distributed.barrier()
     setup_for_distributed(args.rank == 0)
-
-
-from torchvision.transforms import v2 as T
-
-
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
-import torch
 
 
 def get_train_transform():

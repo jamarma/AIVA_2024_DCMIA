@@ -5,7 +5,7 @@ from typing import Any
 
 class ModelFactory:
     @staticmethod
-    def create_model(num_classes) -> Any:
+    def create_model() -> Any:
         # load a model pre-trained on COCO
         model = torchvision.models.detection.fasterrcnn_resnet50_fpn(weights='COCO_V1')
 
