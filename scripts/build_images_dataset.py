@@ -170,6 +170,8 @@ def save_patches_and_annotations_by_indices(img_patches: [np.array], mask_patche
         img_patch = img_patches[idx]
         mask_patch = mask_patches[idx]
         bboxs, classes = get_bounding_boxes(mask_patch)
+        if len(bboxs) == 0:
+            continue
         filename = f'{idx}.png'
         xml = generate_pascal_voc_xml(filename, img_patch.shape, bboxs, classes)
         with open(os.path.join(output_path, f'{idx}.xml'), 'w') as f:
