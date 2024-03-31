@@ -59,7 +59,7 @@ class ObjectDetector(ABC):
             # evaluate on the test dataset
             evaluate(self.model, self.val_data_loader, device=self.device)
 
-    def predict(self, image: torch.Tensor, threshold: float = 0.6) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    def predict(self, image: torch.Tensor, threshold: float = 0.5) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """
         Predicts bounding boxes, labels, and scores for given image.
 
