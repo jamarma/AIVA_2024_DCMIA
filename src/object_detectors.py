@@ -210,9 +210,9 @@ class FCOS(ObjectDetector):
             - num_classes (int): Number of classes for detection.
         """
         super().__init__(
+            num_classes,
             train_data_loader,
             val_data_loader,
-            num_classes
         )
 
     @staticmethod
