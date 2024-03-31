@@ -4,6 +4,7 @@ from pathlib import Path
 # Paths of project
 PROJECT_PATH = Path(__file__).parent.parent
 DATA_PATH = os.path.join(PROJECT_PATH, 'data')
+RAW_IMAGES_PATH = os.path.join(DATA_PATH, 'raw/images')
 TRAIN_DATA_PATH = os.path.join(DATA_PATH, 'train')
 TEST_DATA_PATH = os.path.join(DATA_PATH, 'test')
 VAL_DATA_PATH = os.path.join(DATA_PATH, 'val')

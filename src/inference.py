@@ -16,7 +16,7 @@ image, _ = test_dataset[50]
 # Loads trained model and makes prediction
 object_detector = FasterRCNN(len(CLASSES))
 object_detector.load_model('model1.pth')
-labels, boxes, scores = object_detector.predict(image)
+boxes, labels, scores = object_detector.predict(image)
 
 # Normalizes image
 image = (255.0 * (image - image.min()) / (image.max() - image.min())).to(torch.uint8)

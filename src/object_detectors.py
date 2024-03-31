@@ -59,7 +59,7 @@ class ObjectDetector(ABC):
             # evaluate on the test dataset
             evaluate(self.model, self.val_data_loader, device=self.device)
 
-    def predict(self, image: torch.Tensor, threshold: float = 0.6) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    def predict(self, image: torch.Tensor, threshold: float = 0.5) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """
         Predicts bounding boxes, labels, and scores for given image.
 
@@ -73,7 +73,8 @@ class ObjectDetector(ABC):
             - scores (torch.Tensor): Predicted scores.
         """
         image = image.to(self.device)
-        pred = self.model([image, ])[0]
+        with torch.no_grad():
+            pred = self.model([image, ])[0]
 
         # Filter pred by threshold
         mask = pred['scores'] >= threshold
@@ -83,7 +84,7 @@ class ObjectDetector(ABC):
         keep = nms(pred['boxes'], pred['scores'], iou_threshold=0.2)
         pred = {key: value[keep] for key, value in pred.items()}
 
-        return pred['labels'], pred['boxes'].long(), pred['scores']
+        return pred['boxes'], pred['labels'], pred['scores']
 
     def save_model(self, filename: str) -> None:
         """
@@ -199,7 +200,7 @@ class RetinaNet(ObjectDetector):
 
 
 class FCOS(ObjectDetector):
-    def __init__(self, train_data_loader, val_data_loader, num_classes: int) -> None:
+    def __init__(self, num_classes: int, train_data_loader=None, val_data_loader=None) -> None:
         """
         Initializes the FCOS object detector.
 
@@ -209,9 +210,9 @@ class FCOS(ObjectDetector):
             - num_classes (int): Number of classes for detection.
         """
         super().__init__(
+            num_classes,
             train_data_loader,
             val_data_loader,
-            num_classes
         )
 
     @staticmethod
