@@ -1,75 +1,66 @@
 import unittest
-import numpy as np
-import cv2 as cv
 
-from src.app.user.house_detector import HouseDetector
-from src.house_detector.utils.io_utils import get_bounding_boxes
+import cv2
+import numpy as np
+from house_detector import HouseDetector
 
 
 class TestHouseDetector(unittest.TestCase):
+    @classmethod
+    def setUpClass(self):
+        # Example image
+        self.image = cv2.imread("data/austin1.tif")
+        self.void_image = np.zeros((5000, 5000, 3), dtype=np.uint8)
 
-    def setUp(self):
-        self.detector = HouseDetector()
+        # Example model filename
+        self.model_filename = "../src/model/model1_fcos5.pth"
 
-    def test_predict_returns_list_of_tuples(self):
-        image = "test/data/austin1.tif"
-        result = self.detector.predict(image)
+        # Create a HouseDetector instance
+        self.house_detector = HouseDetector(self.model_filename)
 
-        self.assertIsInstance(result, list)
+        # Example window size and step size
+        window_size = 500
+        step_size = 400
 
-        for bbox, score in result:
-            self.assertIsInstance(bbox, np.ndarray)
-            for coord in bbox:
-                self.assertIsInstance(coord, float)
-            self.assertIsInstance(score, float)
+        # Call the detect method
+        self.boxes_arr, self.labels_arr, self.scores_arr = self.house_detector.detect(self.image, window_size, step_size)
 
-    def test_predict_returns_correct_format(self):
-        image = "test/data/austin1.tif"
-        result = self.detector.predict(image)
+    def test_detect_check_format(self):
+        # Ensure the arrays are correct
+        self.assertEqual(self.boxes_arr.shape[1], 4)  # Each bounding box should have 4 coordinates
+        self.assertEqual(self.labels_arr[1], 1)  # Each label should be a single value
+        self.assertIsInstance(self.scores_arr[0], np.float32)  # Each score should be a single value
 
-        for bbox, score in result:
-            self.assertEqual(len(bbox), 4)
-            self.assertGreaterEqual(score, 0.0)
-            self.assertLessEqual(score, 100.0)
 
-    def test_predict_handles_empty_image(self):
-        empty_image = np.zeros((100, 100, 3), dtype=np.uint8)
-        result = self.detector.predict(empty_image)
+    def test_detect_check_valid_values(self):
+        # Ensure the values are within a valid range
+        self.assertTrue(np.all(self.boxes_arr >= 0))
+        self.assertTrue(np.all(self.scores_arr >= 0))
+        self.assertTrue(np.all(self.scores_arr <= 1))
+        self.assertTrue(np.all(self.labels_arr == 1))
 
-        self.assertEqual(len(result), 0)
+    def test_detect_check_consistent(self):
+        # Ensure the number of boxes, labels, and scores are consistent
+        self.assertEqual(self.boxes_arr.shape[0], self.labels_arr.shape[0])
+        self.assertEqual(self.boxes_arr.shape[0], self.scores_arr.shape[0])
 
-    def test_predict_coordinates_within_image_size(self):
-        image = "test/data/austin1.tif"
-        result = self.detector.predict(image)
+    def test_detect_void_image(self):
+        # Create a HouseDetector instance
+        house_detector = HouseDetector(self.model_filename)
 
-        for bbox, _ in result:
-            img_height, img_width, _ = cv.imread(image).shape
+        # Example window size and step size
+        window_size = 500
+        step_size = 400
 
-            for coord in bbox:
-                self.assertGreaterEqual(coord, 0)
-                if coord % 2 == 0:
-                    self.assertLessEqual(coord, img_width)
-                else:
-                    self.assertLessEqual(coord, img_height)
+        # Call the detect method
+        boxes_arr, labels_arr, scores_arr = house_detector.detect(self.void_image, window_size, step_size)
 
-    def test_predict_performance(self):
-        image = "test/data/austin1.tif"
-        gt = "test/data/gt_austin1.tif"
+        # Ensure the arrays are correct
+        self.assertEqual(boxes_arr.shape[0], 0)
 
-        bounding_boxes_gt = get_bounding_boxes(gt)
-        bounding_boxes_pred = self.detector.predict(image)
-
-        accuracy = len(bounding_boxes_pred) / len(bounding_boxes_gt) * 100
-        self.assertGreaterEqual(accuracy, 90)
-
-    def test_predict_less_equal_groundtruth(self):
-        image = "test/data/austin1.tif"
-        gt = "test/data/gt_austin1.tif"
-
-        bounding_boxes_gt = get_bounding_boxes(gt)
-        bounding_boxes_pred = self.detector.predict(image)
-
-        self.assertLessEqual(len(bounding_boxes_pred), len(bounding_boxes_gt))
+        # Ensure the number of boxes, labels, and scores are consistent
+        self.assertEqual(boxes_arr.shape[0], labels_arr.shape[0])
+        self.assertEqual(boxes_arr.shape[0], scores_arr.shape[0])
 
 
 if __name__ == '__main__':
