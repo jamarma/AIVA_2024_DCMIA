@@ -1,8 +1,8 @@
 import unittest
-import cv2
-import numpy as np
 import torch
-from house_detector_evaluator import HouseDetectorEvaluator
+import sys
+sys.path.insert(0, '../src')
+
 from predictions_patch_matrix import PredictionsPatchMatrix
 from predictions_patch import PredictionsPatch
 
