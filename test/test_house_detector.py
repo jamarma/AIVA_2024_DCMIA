@@ -2,7 +2,7 @@ import unittest
 
 import cv2
 import numpy as np
-from house_detector import HouseDetector
+from src.house_detector import HouseDetector
 
 
 class TestHouseDetector(unittest.TestCase):
