@@ -1,7 +1,6 @@
 import torch
 import numpy as np
 import utils
-import cv2
 from torchvision.utils import draw_bounding_boxes
 
 from constants import CLASSES

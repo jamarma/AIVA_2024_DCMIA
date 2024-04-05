@@ -8,7 +8,6 @@ from torchvision.models.detection import RetinaNet_ResNet50_FPN_V2_Weights
 from torchvision.models.detection.retinanet import RetinaNetClassificationHead
 from torchvision.models.detection.fcos import FCOSClassificationHead
 from abc import ABC, abstractmethod
-from typing import Tuple
 
 from torchvision_sources.engine import train_one_epoch, evaluate
 import constants
@@ -59,7 +58,7 @@ class ObjectDetector(ABC):
             # evaluate on the test dataset
             evaluate(self.model, self.val_data_loader, device=self.device)
 
-    def predict(self, image: torch.Tensor, threshold: float = 0.5) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    def predict(self, image: torch.Tensor, threshold: float = 0.5) -> (torch.Tensor, torch.Tensor, torch.Tensor):
         """
         Predicts bounding boxes, labels, and scores for given image.
 

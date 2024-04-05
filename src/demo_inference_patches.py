@@ -1,21 +1,20 @@
 import torch
 import matplotlib.pyplot as plt
 from torchvision.utils import draw_bounding_boxes
-# import matplotlib
-# matplotlib.use('TkAgg')
 
 import utils
 from houses_dataset import HousesDataset
-from object_detectors import FasterRCNN, RetinaNet
+from object_detectors import FasterRCNN, RetinaNet, FCOS
 from constants import CLASSES, TEST_DATA_PATH
 
 # Test images
 test_dataset = HousesDataset(TEST_DATA_PATH, CLASSES, transforms=utils.get_transform())
+# IMPORTANT: Choose the desired test image!
 image, _ = test_dataset[50]
 
 # Loads trained model and makes prediction
-object_detector = FasterRCNN(len(CLASSES))
-object_detector.load_model('model1.pth')
+object_detector = FCOS(len(CLASSES))
+object_detector.load_model('model1_fcos5.pth')
 boxes, labels, scores = object_detector.predict(image)
 
 # Normalizes image
