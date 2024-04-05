@@ -1,7 +1,11 @@
 import unittest
 import cv2
 import numpy as np
-from src.house_detector_evaluator import HouseDetectorEvaluator
+import sys
+sys.path.insert(0, '../src')
+
+from house_detector_evaluator import HouseDetectorEvaluator
+
 
 class TestEvaluator(unittest.TestCase):
     def setUp(self):
@@ -14,8 +18,6 @@ class TestEvaluator(unittest.TestCase):
         cv2.rectangle(self.mask, (150, 150), (190, 190), (255), thickness=-1)
         cv2.rectangle(self.mask, (220, 220), (260, 260), (255), thickness=-1)
 
-        cv2.imshow('', self.mask)
-        cv2.waitKey(0)
         # Example predicted bounding boxes
         self.boxes = np.array([
             [60, 60, 100, 100],
@@ -31,7 +33,6 @@ class TestEvaluator(unittest.TestCase):
     def test_evaluate_num_houses(self):
         self.evaluator.add_gt_mask(self.mask)
         ratio = self.evaluator.evaluate_num_houses(self.boxes)
-        print(ratio)
         self.assertAlmostEqual(ratio, 1)
 
     def test_evaluate_bounding_boxes(self):

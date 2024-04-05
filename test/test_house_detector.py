@@ -1,8 +1,10 @@
 import unittest
-
 import cv2
 import numpy as np
-from src.house_detector import HouseDetector
+import sys
+sys.path.insert(0, '../src')
+
+from house_detector import HouseDetector
 
 
 class TestHouseDetector(unittest.TestCase):
@@ -30,7 +32,6 @@ class TestHouseDetector(unittest.TestCase):
         self.assertEqual(self.boxes_arr.shape[1], 4)  # Each bounding box should have 4 coordinates
         self.assertEqual(self.labels_arr[1], 1)  # Each label should be a single value
         self.assertIsInstance(self.scores_arr[0], np.float32)  # Each score should be a single value
-
 
     def test_detect_check_valid_values(self):
         # Ensure the values are within a valid range
