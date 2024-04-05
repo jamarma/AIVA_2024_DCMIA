@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from tqdm import tqdm
 
 import utils
 from object_detectors import FasterRCNN, FCOS, RetinaNet
@@ -87,6 +88,7 @@ class HouseDetector:
             sliding window inside the image.
             - np.array: the sliding window patch.
         """
-        for j, y in enumerate(range(0, image.shape[0] - window_size, step_size)):
+        total = (image.shape[0] - window_size) // step_size + 1
+        for j, y in tqdm(enumerate(range(0, image.shape[0] - window_size, step_size)), total=total, desc="Detecting houses"):
             for i, x in enumerate(range(0, image.shape[1] - window_size, step_size)):
                 yield i, j, x, y, image[y:y + window_size, x:x + window_size]
