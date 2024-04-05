@@ -15,7 +15,7 @@ class TestHouseDetector(unittest.TestCase):
         self.void_image = np.zeros((5000, 5000, 3), dtype=np.uint8)
 
         # Example model filename
-        self.model_filename = "../src/model/model1_fcos5.pth"
+        self.model_filename = "../models/model1_fcos5.pth"
 
         # Create a HouseDetector instance
         self.house_detector = HouseDetector(self.model_filename)
