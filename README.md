@@ -26,7 +26,7 @@ cd AIVA_2024_DCMIA
 DCMIA_ROOT=$(pwd)
 ```
 
-Instalar de paquetes de Python requeridos.
+Instalar dependecias.
 
 ```
 pip install -r requirements.txt
@@ -35,6 +35,7 @@ pip install -r requirements.txt
 Descargar modelo entrenado de detección de casas.
 ```
 mkdir models
+cd models
 gdown https://drive.google.com/uc?id=1lKNUt3BgYel5lC5Hnq88wEF80Qix4Zxy
 ```
 
@@ -124,7 +125,7 @@ cd test; mkdir data; cd data
 gdown https://drive.google.com/uc?id=1x_3GxaDtfInjAZEWjxnXqWY68qR8snzQ
 ```
 
-Ejecutar los test unitarios
+Ejecutar los test unitarios.
 
 ```
 cd $DCMIA_ROOT/test
