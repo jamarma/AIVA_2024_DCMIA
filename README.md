@@ -115,6 +115,10 @@ python build_images_dataset.py
 python train.py
 ```
 
+Los parámetros del entrenamiento se pueden modificar en `$DCMIA_ROOT/src/constants.py`.
+
+El modelo entrenado se almacena en el directorio `$DCMIA_ROOT/models` con el nombre `model.pth`.
+
 ## Test unitarios
 
 Descargar las imágenes necesarias para pasar los test.
