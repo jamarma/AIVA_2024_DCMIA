@@ -26,7 +26,7 @@ cd AIVA_2024_DCMIA
 DCMIA_ROOT=$(pwd)
 ```
 
-Instalar dependecias.
+Instalar dependencias.
 
 ```
 pip install -r requirements.txt
