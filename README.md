@@ -53,7 +53,7 @@ gdown --folder https://drive.google.com/drive/folders/1PSpBUJ381ENDvrEDP4qCrHzIQ
 Todos los scripts se deben ejecutar desde dentro de la carpeta `src` del proyecto.
 
 ```
-cd $DCMIA_ROOT/scr
+cd $DCMIA_ROOT/src
 ```
 
 ### Inferencia
