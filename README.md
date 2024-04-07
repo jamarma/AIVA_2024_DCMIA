@@ -7,7 +7,7 @@ Se ha desarrollado para satisfacer las necesidades de un ayuntamiento que busca 
 
 ![](https://github.com/jamarma/AIVA_2024_DCMIA/blob/main/docs/readme/example.png)
 
-### Prerrequisitos
+## Prerrequisitos
 
 Algoritmo testeado en Ubuntu 22.04:
 
@@ -16,7 +16,7 @@ Algoritmo testeado en Ubuntu 22.04:
 * torchvision 0.17.1  
 * CUDA 12.1
 
-### Instalación
+## Instalación
 
 Clonar el repositorio.
 
@@ -47,7 +47,7 @@ cd data/raw
 gdown --folder https://drive.google.com/drive/folders/1PSpBUJ381ENDvrEDP4qCrHzIQJ5rh6sk
 ```
 
-### Ejecución
+## Ejecución
 
 Todos los scripts se deben ejecutar desde dentro de la carpeta `src` del proyecto.
 
@@ -55,7 +55,7 @@ Todos los scripts se deben ejecutar desde dentro de la carpeta `src` del proyect
 cd $DCMIA_ROOT/scr
 ```
 
-#### Inferencia
+### Inferencia
 
 Para probar el algoritmo ejecute
 
@@ -69,7 +69,7 @@ Si desea guardar una imagen con el resultado ejecute
 python main.py --image_path ../data/raw/test/images/austin1.tif --output_path ./output.png
 ```
 
-#### Evaluación
+### Evaluación
 
 Para evaluar el rendimiento del algoritmo ejecute
 
@@ -77,9 +77,9 @@ Para evaluar el rendimiento del algoritmo ejecute
 python main.py --image_path ../data/raw/test/images/austin1.tif --mask_path ../data/raw/test/masks/austin1.tif
 ```
 
-### Entrenamiento
+## Entrenamiento
 
-#### Preparación de los datos
+### Preparación de los datos
 
 Para entrenar un modelo con tus propios datos, organiza tus imágenes siguiendo esta estructura de directorios.
 
@@ -108,13 +108,13 @@ cd $DCMIA_ROOT/scripts
 python build_images_dataset.py
 ```
 
-#### Ejecución del entrenamiento
+### Ejecución del entrenamiento
 
 ```
 python train.py
 ```
 
-### Test unitarios
+## Test unitarios
 
 Descargar las imágenes necesarias para pasar los test.
 
