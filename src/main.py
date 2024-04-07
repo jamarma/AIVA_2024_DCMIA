@@ -16,6 +16,11 @@ def main(image_path: str, mask_path=None, output_path = None):
     boxes, labels, scores = detector.detect(image)
 
     print('Number of houses detected: ', boxes.shape[0])
+    if output_path is not None:
+        output = utils.draw_boxes(image, boxes)
+        cv2.imwrite(output_path, output)
+        print(f'Output image saved to {output_path}!')
+
     if mask_path:
         mask = cv2.imread(mask_path, cv2.IMREAD_GRAYSCALE)
         evaluator.add_gt_mask(mask)
@@ -28,11 +33,6 @@ def main(image_path: str, mask_path=None, output_path = None):
             AP, AR = evaluator.evaluate_bounding_boxes(boxes, iou_threshold=iou)
             print(f'Average Precision (AP) @[ IoU={iou} ] = {AP:.3f}')
             print(f'Average Recall (AP) @[ IoU={iou} ] = {AR:.3f}')
-
-    if output_path is not None:
-        output = utils.draw_boxes(image, boxes)
-        cv2.imwrite(output_path, output)
-        print(f'Output image saved to {output_path}!')
 
 
 if __name__ == "__main__":

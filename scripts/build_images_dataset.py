@@ -8,9 +8,19 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom.minidom import parseString
 from tqdm import tqdm
 
-TRAIN_DIR = '../data/train/'
-TEST_DIR = '../data/test/'
-VAL_DIR = '../data/val/'
+# Inputs
+RAW_IMAGES_DIR = '../data/raw/train/images/'
+RAW_MASKS_DIR = '../data/raw/train/masks/'
+
+# Outputs
+TRAIN_DIR = '../data/patches/train/'
+TEST_DIR = '../data/patches/test/'
+VAL_DIR = '../data/patches/val/'
+
+PATCH_SIZE = 500
+TRAIN_SIZE = 0.7
+TEST_SIZE = 0.15
+VAL_SIZE = 0.15
 
 
 def crop_patches(images_path: str, masks_path: str, patch_size: int) -> ([np.array], [np.array]):
@@ -206,13 +216,13 @@ def train_test_val_split(data: [np.array], train_size: float, test_size: float, 
 
 
 if '__main__' == __name__:
-    img_patches, mask_patches = crop_patches('../data/raw/images',
-                                             '../data/raw/masks',
-                                             500)
+    img_patches, mask_patches = crop_patches(RAW_IMAGES_DIR,
+                                             RAW_MASKS_DIR,
+                                             PATCH_SIZE)
     train_indices, test_indices, val_indices = train_test_val_split(img_patches,
-                                                                    train_size=0.7,
-                                                                    test_size=0.15,
-                                                                    val_size=0.15)
+                                                                    train_size=TRAIN_SIZE,
+                                                                    test_size=TEST_SIZE,
+                                                                    val_size=VAL_SIZE)
     os.makedirs(TRAIN_DIR, exist_ok=True)
     os.makedirs(TEST_DIR, exist_ok=True)
     os.makedirs(VAL_DIR, exist_ok=True)

@@ -10,7 +10,17 @@ from xml.etree import ElementTree as et
 
 
 class HousesDataset(Dataset):
+    """Pytorch dataset to read Pascal VOC data."""
     def __init__(self, dir_path: str, classes: [str], transforms=None):
+        """
+        Initializes the HousesDataset.
+
+        Parameters:
+            - dir_path (str): the path to data folder.
+            - classes ([str]): list of classes names. The first class must
+            be '__background__'.
+            - transforms (torchvision.transforms).
+        """
         self.dir_path = dir_path
         self.classes = classes
         self.images_paths = natsorted(glob.glob(f'{dir_path}/*.png'))

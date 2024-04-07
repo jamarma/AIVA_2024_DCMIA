@@ -4,7 +4,7 @@ from tqdm import tqdm
 
 import utils
 from object_detectors import FasterRCNN, FCOS, RetinaNet
-from constants import CLASSES
+from constants import CLASSES, SCORE_THRESHOLD
 from predictions_patch import PredictionsPatch
 from predictions_patch_matrix import PredictionsPatchMatrix
 
@@ -48,7 +48,7 @@ class HouseDetector:
             # object detector
             window_tensor = torch.from_numpy(window.transpose((2, 0, 1)))
             window_tensor = transform(window_tensor)
-            boxes, labels, scores = self.object_detector.predict(window_tensor)
+            boxes, labels, scores = self.object_detector.predict(window_tensor, SCORE_THRESHOLD)
 
             # Initializes a patch with predictions
             patch = PredictionsPatch(boxes, labels, scores)

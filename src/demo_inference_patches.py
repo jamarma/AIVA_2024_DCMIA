@@ -10,7 +10,7 @@ from constants import CLASSES, TEST_DATA_PATH
 # Test images
 test_dataset = HousesDataset(TEST_DATA_PATH, CLASSES, transforms=utils.get_transform())
 # IMPORTANT: Choose the desired test image!
-image, _ = test_dataset[50]
+image, _ = test_dataset[4]
 
 # Loads trained model and makes prediction
 object_detector = FCOS(len(CLASSES))
