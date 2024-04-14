@@ -5,6 +5,7 @@ from .models import User
 
 
 class LoginForm(Form):
+    """Represents a web login form."""
     username = StringField('Username', [
         validators.DataRequired(),
         validators.Length(min=4, max=15)
@@ -16,6 +17,7 @@ class LoginForm(Form):
 
 
 class SignupForm(Form):
+    """Represents a web signup form."""
     first_name = StringField('First Name', [
         validators.DataRequired(),
         validators.Length(min=3, max=15)
@@ -42,12 +44,14 @@ class SignupForm(Form):
     ])
 
     def validate_username(form, field):
+        """Checks if the username already exists in the database."""
         username = field.data
         user = User.get_by_username(username)
         if user is not None:
             raise validators.ValidationError('Username already exists')
 
     def validate_email(form, field):
+        """Checks if the email already exists in the database."""
         email = field.data
         user = User.get_by_email(email)
         if user is not None:

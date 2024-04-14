@@ -19,4 +19,7 @@ def create_app(settings_module):
     from .auth import auth_bp
     app.register_blueprint(auth_bp)
 
+    from .user import user_bp
+    app.register_blueprint(user_bp)
+
     return app

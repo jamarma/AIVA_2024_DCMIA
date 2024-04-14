@@ -9,6 +9,7 @@ from app import login_manager
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
+    """Handles user login and renders the login page."""
     if current_user.is_authenticated:
         return redirect(url_for('user.dashboard'))
     login_form = forms.LoginForm(request.form)
@@ -24,6 +25,7 @@ def login():
 
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
+    """Handles user signup and renders the signup page."""
     if current_user.is_authenticated:
         return redirect(url_for('user.dashboard'))
     signup_form = forms.SignupForm(request.form)
@@ -42,10 +44,26 @@ def signup():
 @auth_bp.route('/logout')
 @login_required
 def logout():
+    """Handles user logout and redirects to login page."""
     logout_user()
     return redirect(url_for('auth.login'))
 
 
+@auth_bp.route('/')
+def index():
+    """Redirects to login page."""
+    return redirect(url_for('auth.login'))
+
+
 @login_manager.user_loader
-def load_user(user_id):
+def load_user(user_id: int):
+    """
+    Loads a user from database and returns it.
+
+    Parameters:
+        - user_id (int): the id of the user.
+
+    Returns:
+        - User: the user with given id.
+    """
     return User.get_by_id(int(user_id))
