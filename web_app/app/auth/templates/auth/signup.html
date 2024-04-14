@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center mt-5">
+    <div class="col-lg-4 rounded-4 shadow bg-white">
+        <h2 class="fw-bold text-center pt-3 pb-1">SignUp</h2>
+
+        <div class="row mt-3 mx-2">
+            <div class="col">
+                {% for category, message in get_flashed_messages(with_categories=True) %}
+                    {% from "_macro.html" import alert %}
+                    {{ alert(message, category) }}
+                {% endfor %}
+            </div>
+        </div>
+
+        {% from "_macro.html" import render_field %}
+        <form method="POST" action="/signup">
+            <div class="row mx-2 mb-1">
+                <div class="col-6">
+                    {{ render_field(form.first_name, class='form-control') }}
+                </div>
+                <div class="col-6">
+                    {{ render_field(form.last_name, class='form-control') }}
+                </div>
+            </div>
+            <div class="row mx-2 mb-1">
+                <div class="col-12">
+                    {{ render_field(form.username, class='form-control') }}
+                </div>
+            </div>
+            <div class="row mx-2 mb-1">
+                <div class="col-12">
+                    {{ render_field(form.email, class='form-control') }}
+                </div>
+            </div>
+            <div class="row mx-2 mb-1">
+                <div class="col-6">
+                    {{ render_field(form.password, class='form-control') }}
+                </div>
+                <div class="col-6">
+                    {{ render_field(form.confirm, class='form-control') }}
+                </div>
+            </div>
+            <div class="row mx-2">
+                <div class="col-12 mt-2 d-grid">
+                    <button type="submit" class="btn btn-primary">SignUp</button>
+                </div>
+            </div>
+            <div class="row mt-3 mb-4 text-center">
+                <div class="col-12">
+                    <span>Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></span>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
