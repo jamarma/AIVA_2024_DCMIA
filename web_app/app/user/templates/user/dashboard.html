@@ -5,10 +5,10 @@
     <div class="col-lg-4 rounded-4 shadow bg-white" style="margin-top: 2rem;">
         <h2 id="titleLabel" class="fw-bold text-center pt-3 pb-1 mx-3" style="margin-bottom: 2rem;">Image Analysis</h2>
 
-        <form id="imageUploadForm" method="POST" action="" enctype="multipart/form-data">
+        <form id="imageUploadForm" method="POST" action="{{ url_for('user.dashboard') }}" enctype="multipart/form-data">
             <div class="row mb-3 mx-2">
                 <div id="imageInput" class="col-12">
-                    {}
+                    {{ form.image(class="form-control") }}
                 </div>
             </div>
             <div class="row mb-3 mx-2">
@@ -28,9 +28,6 @@
 
 <script>
     document.getElementById('imageUploadForm').addEventListener('submit', function(event) {
-        // Prevent default form submission
-        event.preventDefault();
-
         // Show spinner, hide button
         document.getElementById('imageInput').style.display = 'none';
         document.getElementById('uploadButton').style.display = 'none';
