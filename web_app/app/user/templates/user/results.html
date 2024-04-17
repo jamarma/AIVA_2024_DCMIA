@@ -2,23 +2,23 @@
 
 {% block content %}
 <div class="row justify-content-center mt-5">
-    <div class="col-lg-6 rounded-4 shadow bg-white" style="margin-top: 2rem;">
-        <h2 class="fw-bold text-center pt-3 pb-1 mx-3" style="margin-bottom: 2rem;">Resultados</h2>
-        <div class="row mt-3 mx-2">
+    <div class="col-lg-6 rounded-4 shadow bg-white">
+        <h2 class="fw-bold text-center mt-3 mx-3">Results</h2>
+        <div class="row mt-2 mx-2">
             <div class="col text-center">
-                <p>Número de casas detectadas: <span class="numHouses">{{ num_houses }}</span></p>
+                <p>Number of houses detected: {{ num_houses }}</p>
             </div>
         </div>
-        <div class="row mt-3 mx-2">
+        <div class="row mx-2">
             <div class="col text-center">
                 <img id="resultImage" src="{{ url_for('media_results', filename=image_file) }}" alt="Detección" style="max-width: 100%; max-height: 400px;">
             </div>
         </div>
-        <div class="row mt-3 mx-2 mb-3">
+        <div class="row mt-4 mx-2 mb-4">
             <div class="col text-center">
-                <a id="saveNumericData" class="btn btn-primary" href="{{ url_for('user.download_file', filename=results_file) }}">Guardar resultados</a>
-                <a id="saveImage" class="btn btn-primary" href="{{ url_for('user.download_file', filename=image_file) }}">Guardar imagen</a>
-                <a href="/dashboard" class="btn btn-primary">Cargar nueva imagen</a>
+                <a id="saveNumericData" class="btn btn-primary me-2" href="{{ url_for('user.download_file', filename=results_file) }}">Save results</a>
+                <a id="saveImage" class="btn btn-primary me-2" href="{{ url_for('user.download_file', filename=image_file) }}">Save image</a>
+                <a href="/dashboard" class="btn btn-primary">Upload new image</a>
             </div>
         </div>
     </div>
