@@ -65,6 +65,24 @@ def draw_boxes(image: np.array, boxes: np.array, labels: np.array = None) -> np.
     return output
 
 
+def save_predictions(boxes: np.array, output_path: str):
+    """
+    Save predictions in file.
+
+    Parameters:
+        - boxes (np.array): the bounding boxes to save.
+        - output_path (str): the output path of file in .txt format.
+    """
+    num_boxes = boxes.shape[0]
+
+    with open(output_path, 'w') as file:
+        file.write(f'Numero de casas: {num_boxes}\n')
+
+        file.write('Bounding boxes:\n')
+        for i, box in enumerate(boxes):
+            file.write(f'{box}\n')
+
+
 def is_valid_output_image(parser: ArgumentParser, arg: str):
     """
     Checks if the destination directory exists and
