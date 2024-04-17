@@ -3,7 +3,7 @@
 {% block content %}
 <div class="row justify-content-center mt-5">
     <div class="col-lg-4 rounded-4 shadow bg-white" style="margin-top: 2rem;">
-        <h2 id="titleLabel" class="fw-bold text-center pt-3 pb-1 mx-3" style="margin-bottom: 2rem;">Image Analysis</h2>
+        <h2 id="titleLabel" class="fw-bold text-center pt-3 pb-1 mx-3" style="margin-bottom: 2rem;">Análisis de Imagen</h2>
 
         <form id="imageUploadForm" method="POST" action="{{ url_for('user.dashboard') }}" enctype="multipart/form-data">
             <div class="row mb-3 mx-2">
@@ -13,12 +13,12 @@
             </div>
             <div class="row mb-3 mx-2">
                 <div class="col-12 d-grid">
-                    <button id="uploadButton" type="submit" class="btn btn-primary">Process</button>
+                    <button id="uploadButton" type="submit" class="btn btn-primary">Procesar</button>
                     <div id="processingContainer" class="mt-3 text-center" style="display: none;">
                         <div id="spinnerContainer" class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
+                            <span class="visually-hidden">Cargando...</span>
                         </div>
-                        <p class="mt-2">Processing... This may take a few minutes</p>
+                        <p class="mt-2">Procesando... Esto puede tardar unos minutos</p>
                     </div>
                 </div>
             </div>
@@ -32,7 +32,6 @@
         document.getElementById('imageInput').style.display = 'none';
         document.getElementById('uploadButton').style.display = 'none';
         document.getElementById('processingContainer').style.display = 'block';
-        document.getElementById('titleLabel').innerText = "Analyzing Image";
     });
 </script>
 {% endblock %}

@@ -3,26 +3,22 @@
 {% block content %}
 <div class="row justify-content-center mt-5">
     <div class="col-lg-6 rounded-4 shadow bg-white" style="margin-top: 2rem;">
-        <h2 class="fw-bold text-center pt-3 pb-1 mx-3" style="margin-bottom: 2rem;">Analysis Results</h2>
-
+        <h2 class="fw-bold text-center pt-3 pb-1 mx-3" style="margin-bottom: 2rem;">Resultados</h2>
         <div class="row mt-3 mx-2">
             <div class="col text-center">
-                <img id="resultImage" src="{{ url_for('media_results', filename=image) }}" alt="Result Image" style="max-width: 100%; max-height: 400px;">
+                <p>Número de casas detectadas: <span class="numHouses">{}</span></p>
             </div>
         </div>
-
         <div class="row mt-3 mx-2">
             <div class="col text-center">
-                <h4>Num of detected houses</h4>
-                <p id="numericResults">{}</p>
+                <img id="resultImage" src="{{ url_for('media_results', filename=image) }}" alt="Detección" style="max-width: 100%; max-height: 400px;">
             </div>
         </div>
-
         <div class="row mt-3 mx-2 mb-3">
             <div class="col text-center">
-                <button id="saveNumericData" class="btn btn-primary">Save Numeric Data</button>
-                <a id="saveImage" class="btn btn-primary" href="{{ url_for('user.download_file', filename=image) }}">Save Image</a>
-                <a href="/dashboard" class="btn btn-primary">Reload Image</a>
+                <button id="saveNumericData" class="btn btn-primary">Guardar resultados</button>
+                <a id="saveImage" class="btn btn-primary" href="{{ url_for('user.download_file', filename=image) }}">Guardar imagen</a>
+                <a href="/dashboard" class="btn btn-primary">Cargar nueva imagen</a>
             </div>
         </div>
     </div>
