@@ -2,10 +2,10 @@ import torch
 import matplotlib.pyplot as plt
 from torchvision.utils import draw_bounding_boxes
 
-import utils
-from houses_dataset import HousesDataset
-from object_detectors import FasterRCNN, RetinaNet, FCOS
-from constants import CLASSES, TEST_DATA_PATH
+from src.dcmia import utils
+from src.dcmia.houses_dataset import HousesDataset
+from src.dcmia.object_detectors import FasterRCNN, RetinaNet, FCOS
+from src.dcmia.constants import CLASSES, TEST_DATA_PATH
 
 # Test images
 test_dataset = HousesDataset(TEST_DATA_PATH, CLASSES, transforms=utils.get_transform())

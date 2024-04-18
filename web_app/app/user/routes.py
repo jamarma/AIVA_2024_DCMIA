@@ -6,8 +6,8 @@ from flask_login import login_required, current_user
 
 from . import user_bp
 from . import forms
-from .dcmia.src.house_detector import HouseDetector
-from .dcmia.src import utils
+from dcmia.house_detector import HouseDetector
+from dcmia import utils
 
 
 @user_bp.route('/dashboard', methods=['GET', 'POST'])

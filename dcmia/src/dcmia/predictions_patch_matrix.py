@@ -1,10 +1,10 @@
 import torch
 import numpy as np
-import utils
 from torchvision.utils import draw_bounding_boxes
 
-from constants import CLASSES
-from predictions_patch import PredictionsPatch
+from . import utils
+from .constants import CLASSES
+from .predictions_patch import PredictionsPatch
 
 
 class PredictionsPatchMatrix:

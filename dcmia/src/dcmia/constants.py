@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 # Paths of project
-PROJECT_PATH = Path(__file__).parent.parent
+PROJECT_PATH = Path(__file__).parent.parent.parent
 DATA_PATH = os.path.join(PROJECT_PATH, 'data')
 PATCHES_PATH = os.path.join(DATA_PATH, 'patches')
 TRAIN_DATA_PATH = os.path.join(PATCHES_PATH, 'train')
