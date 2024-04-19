@@ -7,7 +7,25 @@ Se ha desarrollado para satisfacer las necesidades de un ayuntamiento que busca 
 
 ![](https://github.com/jamarma/AIVA_2024_DCMIA/blob/main/docs/readme/example.png)
 
-## Prerrequisitos
+## Índice de contenidos
+
+* [Uso en local]()
+    * [Prerrequisitos](https://github.com/jamarma/AIVA_2024_DCMIA#prerrequisitos)
+    * [Instalación](https://github.com/jamarma/AIVA_2024_DCMIA#instalaci%C3%B3n)
+    * [Ejecución](https://github.com/jamarma/AIVA_2024_DCMIA#ejecuci%C3%B3n)
+        * [Inferencia](https://github.com/jamarma/AIVA_2024_DCMIA#inferencia)
+        * [Evaluación](https://github.com/jamarma/AIVA_2024_DCMIA#evaluaci%C3%B3n)
+    * [Entrenamiento](https://github.com/jamarma/AIVA_2024_DCMIA#entrenamiento)
+        * [Preparación de los datos](https://github.com/jamarma/AIVA_2024_DCMIA#preparaci%C3%B3n-de-los-datos)
+        * [Ejecución del entrenamiento](https://github.com/jamarma/AIVA_2024_DCMIA#ejecuci%C3%B3n-del-entrenamiento)
+    * [Test unitarios](https://github.com/jamarma/AIVA_2024_DCMIA#test-unitarios)
+* [Despliegue](https://github.com/jamarma/AIVA_2024_DCMIA#despliegue)
+
+## Uso en local
+
+En esta sección se muestran los pasos para instalar y ejecutar el sistema de detección de casas en local por línea de comandos.
+
+### Prerrequisitos
 
 Algoritmo testeado en Ubuntu 22.04:
 
@@ -16,13 +34,13 @@ Algoritmo testeado en Ubuntu 22.04:
 * torchvision 0.17.1  
 * CUDA 12.1
 
-## Instalación
+### Instalación
 
 Clonar el repositorio.
 
 ```
 git clone https://github.com/jamarma/AIVA_2024_DCMIA.git
-cd AIVA_2024_DCMIA
+cd AIVA_2024_DCMIA/dcmia
 DCMIA_ROOT=$(pwd)
 ```
 
@@ -39,7 +57,7 @@ cd models
 gdown https://drive.google.com/uc?id=1lKNUt3BgYel5lC5Hnq88wEF80Qix4Zxy
 ```
 
-Descargar imágenes para probar y evaluar el algoritmo.
+Descargar imágenes para probar y evaluar el algoritmo. Esto es un paso opcional, sólo es necesario si no tienes tus propias imágenes.
 
 ```
 cd $DCMIA_ROOT
@@ -48,39 +66,35 @@ cd data/raw
 gdown --folder https://drive.google.com/drive/folders/1PSpBUJ381ENDvrEDP4qCrHzIQJ5rh6sk
 ```
 
-## Ejecución
+### Ejecución
 
-Todos los scripts se deben ejecutar desde dentro de la carpeta `src` del proyecto.
+Los scripts ejecutables se encuentran en el directorio raiz $DCMIA_ROOT. 
 
-```
-cd $DCMIA_ROOT/src
-```
-
-### Inferencia
+#### Inferencia
 
 Para probar el algoritmo ejecute
 
 ```
-python main.py --image_path ../data/raw/test/images/austin1.tif
+python main.py --image_path data/raw/test/images/austin1.tif
 ```
 
 Si desea guardar una imagen con el resultado ejecute
 
 ```
-python main.py --image_path ../data/raw/test/images/austin1.tif --output_path ./output.png
+python main.py --image_path data/raw/test/images/austin1.tif --output_path ./output.png
 ```
 
-### Evaluación
+#### Evaluación
 
 Para evaluar el rendimiento del algoritmo ejecute
 
 ```
-python main.py --image_path ../data/raw/test/images/austin1.tif --mask_path ../data/raw/test/masks/austin1.tif
+python main.py --image_path data/raw/test/images/austin1.tif --mask_path data/raw/test/masks/austin1.tif
 ```
 
-## Entrenamiento
+### Entrenamiento
 
-### Preparación de los datos
+#### Preparación de los datos
 
 Para entrenar un modelo con tus propios datos, organiza tus imágenes siguiendo esta estructura de directorios.
 
@@ -109,17 +123,17 @@ cd $DCMIA_ROOT/scripts
 python build_images_dataset.py
 ```
 
-### Ejecución del entrenamiento
+#### Ejecución del entrenamiento
 
 ```
 python train.py
 ```
 
-Los parámetros del entrenamiento se pueden modificar en `$DCMIA_ROOT/src/constants.py`.
+Los parámetros del entrenamiento se pueden modificar en `$DCMIA_ROOT/src/dcmia/constants.py`.
 
 El modelo entrenado se almacena en el directorio `$DCMIA_ROOT/models` con el nombre `model.pth`.
 
-## Test unitarios
+### Test unitarios
 
 Descargar las imágenes necesarias para pasar los test.
 
@@ -136,3 +150,25 @@ cd $DCMIA_ROOT/test
 
 python -m unittest -v test_house_detector.py test_prediction_patch_matrix.py test_house_detector_evaluator.py
 ```
+
+## Despliegue
+
+Se ha construido una imagen docker que proporciona el despliegue del sistema en un servidor Flask local.
+
+> IMPORTANTE: instalar el paquete [nvidia-container-toolkit](https://docs.docker.com/config/containers/resource_constraints/#gpu) para habilitar el uso de la GPU. Es necesario disponer de una GPU compatible con CUDA 12.1.
+
+Descarga la imagen
+
+```
+docker pull jamarma/dcmia-app:latest
+```
+
+Lanza el contenedor con el servidor
+
+```
+docker run --rm --gpus all -p 5000:5000 jamarma/dcmia-app
+```
+
+Abre un navegador y dirígente a http://localhost:5000/. Podrás usar el sistema DCMIA desde una interfaz web.
+
+![](https://github.com/jamarma/AIVA_2024_DCMIA/blob/dev/docs/readme/app-example.png)
