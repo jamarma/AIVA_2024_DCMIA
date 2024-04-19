@@ -10,9 +10,9 @@ from dcmia.house_detector import HouseDetector
 from dcmia import utils
 
 
-@user_bp.route('/dashboard', methods=['GET', 'POST'])
+@user_bp.route('/process_image', methods=['GET', 'POST'])
 @login_required
-def dashboard():
+def process_image():
     """
     Renders the page with the form to upload an image and runs
     the house detection algorithm. Also saves the results
@@ -37,7 +37,7 @@ def dashboard():
         # Saves predictions in txt file to media dir
         utils.save_predictions(boxes, os.path.join(media_dir, 'result.txt'))
         return redirect(url_for('user.results'))
-    return render_template("user/dashboard.html", form=upload_form)
+    return render_template("user/process_image.html", form=upload_form)
 
 
 @user_bp.route('/results', methods=['GET', 'POST'])

@@ -5,7 +5,7 @@
     <div class="col-lg-4 rounded-4 shadow bg-white">
         <h2 id="titleLabel" class="fw-bold text-center mt-3 mx-3">Image analysis</h2>
 
-        <form id="imageUploadForm" method="POST" action="{{ url_for('user.dashboard') }}" enctype="multipart/form-data">
+        <form id="imageUploadForm" method="POST" action="{{ url_for('user.process_image') }}" enctype="multipart/form-data">
             <div class="row mb-3 mx-2 mt-4">
                 <div id="imageInput" class="col-12">
                     {{ form.image(class="form-control") }}
@@ -18,7 +18,7 @@
                         <div id="spinnerContainer" class="spinner-border text-primary mb-3" role="status">
                             <span class="visually-hidden">.</span>
                         </div>
-                        <p>Processing... This may take a few minutes</p>
+                        <p>Processing... This may take a few seconds.</p>
                     </div>
                 </div>
             </div>

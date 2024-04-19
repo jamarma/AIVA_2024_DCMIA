@@ -11,7 +11,7 @@ from app import login_manager
 def login():
     """Handles user login and renders the login page."""
     if current_user.is_authenticated:
-        return redirect(url_for('user.dashboard'))
+        return redirect(url_for('user.process_image'))
     login_form = forms.LoginForm(request.form)
     if request.method == 'POST' and login_form.validate():
         user = User.get_by_username(login_form.username.data)
@@ -19,7 +19,7 @@ def login():
             flash('Please check your login details and try again.', "danger")
             return redirect(url_for('auth.login'))
         login_user(user, remember=login_form.remember_me.data)
-        return redirect(url_for('user.dashboard'))
+        return redirect(url_for('user.process_image'))
     return render_template("auth/login.html", form=login_form)
 
 
@@ -27,7 +27,7 @@ def login():
 def signup():
     """Handles user signup and renders the signup page."""
     if current_user.is_authenticated:
-        return redirect(url_for('user.dashboard'))
+        return redirect(url_for('user.process_image'))
     signup_form = forms.SignupForm(request.form)
     if request.method == 'POST' and signup_form.validate():
         user = User(first_name=signup_form.first_name.data,

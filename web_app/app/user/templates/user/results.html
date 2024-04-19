@@ -11,14 +11,14 @@
         </div>
         <div class="row mx-2">
             <div class="col text-center">
-                <img id="resultImage" src="{{ url_for('media_results', filename=image_file) }}" alt="Detección" style="max-width: 100%; max-height: 400px;">
+                <img id="resultImage" src="{{ url_for('user.media_results', filename=image_file) }}" alt="Detección" style="max-width: 100%; max-height: 400px;">
             </div>
         </div>
         <div class="row mt-4 mx-2 mb-4">
             <div class="col text-center">
                 <a id="saveNumericData" class="btn btn-primary me-2" href="{{ url_for('user.download_file', filename=results_file) }}">Save results</a>
                 <a id="saveImage" class="btn btn-primary me-2" href="{{ url_for('user.download_file', filename=image_file) }}">Save image</a>
-                <a href="/dashboard" class="btn btn-primary">Upload new image</a>
+                <a href="/process_image" class="btn btn-primary">Upload new image</a>
             </div>
         </div>
     </div>
