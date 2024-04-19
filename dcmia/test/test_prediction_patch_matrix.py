@@ -1,10 +1,10 @@
 import unittest
 import torch
 import sys
-sys.path.insert(0, '../src')
+sys.path.append('../')
 
-from predictions_patch_matrix import PredictionsPatchMatrix
-from predictions_patch import PredictionsPatch
+from src.dcmia.predictions_patch_matrix import PredictionsPatchMatrix
+from src.dcmia.predictions_patch import PredictionsPatch
 
 
 class TestPredictionsPatchMatrix(unittest.TestCase):

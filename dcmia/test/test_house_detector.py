@@ -2,9 +2,9 @@ import unittest
 import cv2
 import numpy as np
 import sys
-sys.path.insert(0, '../src')
+sys.path.append('../')
 
-from house_detector import HouseDetector
+from src.dcmia.house_detector import HouseDetector
 
 
 class TestHouseDetector(unittest.TestCase):
