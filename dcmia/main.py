@@ -1,11 +1,11 @@
 import cv2
 import argparse
 
-import utils
-from house_detector import HouseDetector
-from house_detector_evaluator import HouseDetectorEvaluator
+from src.dcmia import utils
+from src.dcmia.house_detector import HouseDetector
+from src.dcmia.house_detector_evaluator import HouseDetectorEvaluator
 
-#  python main.py --image_path ../data/raw/images/austin1.tif --mask_path ../data/raw/masks/austin1.tif
+#  python main.py --image_path data/raw/test/images/austin1.tif --mask_path data/raw/test/masks/austin1.tif
 
 
 def main(image_path: str, mask_path=None, output_path = None):

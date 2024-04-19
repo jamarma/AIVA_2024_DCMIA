@@ -9,8 +9,8 @@ from torchvision.models.detection.retinanet import RetinaNetClassificationHead
 from torchvision.models.detection.fcos import FCOSClassificationHead
 from abc import ABC, abstractmethod
 
-from torchvision_sources.engine import train_one_epoch, evaluate
-import constants
+from .torchvision_sources.engine import train_one_epoch, evaluate
+from . import constants
 
 
 class ObjectDetector(ABC):

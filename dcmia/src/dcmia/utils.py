@@ -6,7 +6,7 @@ import os
 from torchvision.transforms import v2 as T
 from argparse import ArgumentParser
 
-from constants import CLASSES
+from .constants import CLASSES
 
 
 def get_transform() -> T.Compose:
@@ -63,6 +63,24 @@ def draw_boxes(image: np.array, boxes: np.array, labels: np.array = None) -> np.
                 cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2
             )
     return output
+
+
+def save_predictions(boxes: np.array, output_path: str):
+    """
+    Save predictions in file.
+
+    Parameters:
+        - boxes (np.array): the bounding boxes to save.
+        - output_path (str): the output path of file in .txt format.
+    """
+    num_boxes = boxes.shape[0]
+
+    with open(output_path, 'w') as file:
+        file.write(f'Numero de casas: {num_boxes}\n')
+
+        file.write('Bounding boxes:\n')
+        for i, box in enumerate(boxes):
+            file.write(f'{box}\n')
 
 
 def is_valid_output_image(parser: ArgumentParser, arg: str):

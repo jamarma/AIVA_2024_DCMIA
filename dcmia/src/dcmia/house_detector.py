@@ -2,11 +2,11 @@ import numpy as np
 import torch
 from tqdm import tqdm
 
-import utils
-from object_detectors import FasterRCNN, FCOS, RetinaNet
-from constants import CLASSES, SCORE_THRESHOLD
-from predictions_patch import PredictionsPatch
-from predictions_patch_matrix import PredictionsPatchMatrix
+from . import utils
+from .object_detectors import FasterRCNN, FCOS, RetinaNet
+from .constants import CLASSES, SCORE_THRESHOLD
+from .predictions_patch import PredictionsPatch
+from .predictions_patch_matrix import PredictionsPatchMatrix
 
 
 class HouseDetector:

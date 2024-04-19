@@ -1,8 +1,9 @@
 import secrets
-from os.path import abspath, dirname
+from os.path import abspath, dirname, join
 
-# Define the application directory
+# Define the application directories
 BASE_DIR = dirname(dirname(abspath(__file__)))
+MEDIA_DIR = join(BASE_DIR, 'media')
 
 SECRET_KEY = secrets.token_urlsafe(20)
 

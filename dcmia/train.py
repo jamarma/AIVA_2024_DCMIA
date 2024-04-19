@@ -1,10 +1,10 @@
 from torch.utils.data import DataLoader
-import utils
+from src.dcmia import utils
 
-from constants import (CLASSES, TRAIN_DATA_PATH, VAL_DATA_PATH,
+from src.dcmia.constants import (CLASSES, TRAIN_DATA_PATH, VAL_DATA_PATH,
                        BATCH_SIZE, EPOCHS, LEARNING_RATE)
-from object_detectors import FasterRCNN, RetinaNet, FCOS
-from houses_dataset import HousesDataset
+from src.dcmia.object_detectors import FasterRCNN, RetinaNet, FCOS
+from src.dcmia.houses_dataset import HousesDataset
 
 if __name__ == "__main__":
     # Loads train and validation data
