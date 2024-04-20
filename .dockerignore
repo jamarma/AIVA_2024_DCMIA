@@ -1,0 +1,11 @@
+.venv
+.git
+.idea
+docs
+dcmia/data
+dcmia/test
+dcmia/scripts
+dcmia/train.py
+dcmia/main.py
+dcmia/demo_inference_patches.py
+**/__pycache__/

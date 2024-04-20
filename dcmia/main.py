@@ -1,47 +1,72 @@
 import cv2
 import argparse
+import numpy as np
+import matplotlib.pyplot as plt
 
 from src.dcmia import utils
 from src.dcmia.house_detector import HouseDetector
 from src.dcmia.house_detector_evaluator import HouseDetectorEvaluator
+from src.dcmia.constants import SCORE_THRESHOLD
 
-#  python main.py --image_path data/raw/test/images/austin1.tif --mask_path data/raw/test/masks/austin1.tif
 
-
-def main(image_path: str, mask_path=None, output_path = None):
+def main(image_path: str, mask_path=None, output_image=None, output_results=None):
+    # Reads image
     image = cv2.imread(image_path)
 
+    # Initializes the house detector and it makes the detections
     detector = HouseDetector(model_filename='model1_fcos5.pth')
-    evaluator = HouseDetectorEvaluator()
-    boxes, labels, scores = detector.detect(image)
-
+    boxes, labels, scores = detector.detect(image, SCORE_THRESHOLD)
     print('Number of houses detected: ', boxes.shape[0])
-    if output_path is not None:
+    # Save detections if output_image or output_results are provided by user
+    if output_image is not None:
         output = utils.draw_boxes(image, boxes)
-        cv2.imwrite(output_path, output)
-        print(f'Output image saved to {output_path}!')
+        cv2.imwrite(output_image, output)
+        print(f'Output image saved to {output_image}!')
+    if output_results is not None:
+        utils.save_predictions(boxes, output_results)
+        print(f'Output results file saved to {output_results}!')
 
+    # If the ground truth is provided, the evaluation process begins.
     if mask_path:
+        # Read de binary mask with ground truth
         mask = cv2.imread(mask_path, cv2.IMREAD_GRAYSCALE)
+        # Initializes the evaluator
+        evaluator = HouseDetectorEvaluator()
+        # Adds ground truth to evaluator
         evaluator.add_gt_mask(mask)
-        ratio = evaluator.evaluate_num_houses(boxes)
-        print(f'Ratio of the number of houses detected: {ratio:.2f}')
 
-        print("Evaluating bounding boxes...")
-        iou_thresholds = [0.5, 0.75, 0.9]
+        # Calculates metrics for a defined score threshold and iou_threshold
+        ratio = evaluator.evaluate_num_houses(boxes)
+        iou_threshold = 0.5
+        TP, FN, FP = evaluator.confusion_matrix(boxes, iou_threshold)
+        precision = TP / (TP + FP) if (TP + FP) != 0 else 0
+        recall = TP / (TP + FN) if (TP + FN) != 0 else 0
+        print(f'\nMETRICS (SCORE THRESHOLD: {SCORE_THRESHOLD}, IOU THRESHOLD: {iou_threshold}):')
+        print(f'> Ratio of the number of houses detected: {ratio:.2f}')
+        print(f'> Precision: {precision:.2f}')
+        print(f'> Recall: {recall:.2f}')
+
+        # Calculates de precision-recall curve and Average Precision (AP)
+        # for a list of iou_thresholds
+        iou_thresholds = [0.5]
         for iou in iou_thresholds:
-            AP, AR = evaluator.evaluate_bounding_boxes(boxes, iou_threshold=iou)
+            print(f'\nTHE CALCULATION OF PRECISION-RECALL CURVE BEGINS (IoU = {iou})!')
+            precision, recall = evaluator.precision_recall_curve(detector, image, iou)
+            AP = np.mean(precision)
             print(f'Average Precision (AP) @[ IoU={iou} ] = {AP:.3f}')
-            print(f'Average Recall (AP) @[ IoU={iou} ] = {AR:.3f}')
+            utils.plot_precision_recall_curve(precision, recall)
+        plt.show()
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--image_path', type=str, help='Path to the input image', required=True)
     parser.add_argument('--mask_path', type=str, help='Path to the binary mask ground truth')
-    parser.add_argument('--output_path', type=lambda x: utils.is_valid_output_image(parser, x),
+    parser.add_argument('--output_image', type=lambda x: utils.is_valid_output_file(parser, x, 'png'),
                         help='Output image path (.png) with boxes drawn of detected houses')
+    parser.add_argument('--output_results', type=lambda x: utils.is_valid_output_file(parser, x, 'txt'),
+                        help='Output results file path (.txt) with num of detected houses and bounding boxes')
     args = parser.parse_args()
 
-    main(args.image_path, args.mask_path, args.output_path)
+    main(args.image_path, args.mask_path, args.output_image, args.output_results)
 

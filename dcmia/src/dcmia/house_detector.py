@@ -22,13 +22,14 @@ class HouseDetector:
         self.object_detector = FCOS(len(CLASSES))
         self.object_detector.load_model(model_filename)
 
-    def detect(self, image: np.array, window_size=500, step_size=400) -> (np.array, np.array, np.array):
+    def detect(self, image: np.array, threshold: float, window_size=500, step_size=400) -> (np.array, np.array, np.array):
         """
         Returns the bounding boxes, labels and scores of the houses detected
         in the input image. Uses a sliding window to make the detections.
 
         Parameters:
             - image (np.array): the input image.
+            - threshold (float): the score threshold.
             - window_size (int): the size of sliding window.
             - step_size (int): the size of the step between windows.
 
@@ -48,7 +49,7 @@ class HouseDetector:
             # object detector
             window_tensor = torch.from_numpy(window.transpose((2, 0, 1)))
             window_tensor = transform(window_tensor)
-            boxes, labels, scores = self.object_detector.predict(window_tensor, SCORE_THRESHOLD)
+            boxes, labels, scores = self.object_detector.predict(window_tensor, threshold)
 
             # Initializes a patch with predictions
             patch = PredictionsPatch(boxes, labels, scores)
