@@ -84,27 +84,28 @@ def save_predictions(boxes: np.array, output_path: str):
             file.write(f'{box}\n')
 
 
-def is_valid_output_image(parser: ArgumentParser, arg: str):
+def is_valid_output_file(parser: ArgumentParser, arg: str, extension: str):
     """
     Checks if the destination directory exists and
-    if the output image name has the desired extension.
+    if the output file name has the desired extension.
 
     Parameters:
         - parser (ArgumentParser): the argument parser.
         - arg (str): the path to check.
+        - extension (str): extension of file.
 
     Returns:
         - arg (str): the path checked.
     """
-    image_dir = os.path.dirname(arg) or '.'
-    if not os.path.exists(image_dir):
-        parser.error(f'The directory {image_dir} does not exist!')
+    file_dir = os.path.dirname(arg) or '.'
+    if not os.path.exists(file_dir):
+        parser.error(f'The directory {file_dir} does not exist!')
     try:
-        filename, extension = os.path.basename(arg).split('.')
+        filename, ext = os.path.basename(arg).split('.')
     except:
-        parser.error('Invalid file name of the output image')
-    if extension != "png":
-        parser.error('The file extension must be .png')
+        parser.error('Invalid name of the output file')
+    if ext != extension:
+        parser.error(f'The file extension of {arg} must be {extension}')
     return arg
 
 
