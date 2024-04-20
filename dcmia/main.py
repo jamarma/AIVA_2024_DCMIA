@@ -1,38 +1,57 @@
 import cv2
 import argparse
+import numpy as np
+import matplotlib.pyplot as plt
 
 from src.dcmia import utils
 from src.dcmia.house_detector import HouseDetector
 from src.dcmia.house_detector_evaluator import HouseDetectorEvaluator
+from src.dcmia.constants import SCORE_THRESHOLD
 
-#  python main.py --image_path data/raw/test/images/austin1.tif --mask_path data/raw/test/masks/austin1.tif
 
-
-def main(image_path: str, mask_path=None, output_path = None):
+def main(image_path: str, mask_path=None, output_path=None):
+    # Reads image
     image = cv2.imread(image_path)
 
+    # Initializes the house detector and it makes the detections
     detector = HouseDetector(model_filename='model1_fcos5.pth')
-    evaluator = HouseDetectorEvaluator()
-    boxes, labels, scores = detector.detect(image)
-
+    boxes, labels, scores = detector.detect(image, SCORE_THRESHOLD)
     print('Number of houses detected: ', boxes.shape[0])
+    # Save detections if output_path is provided by user
     if output_path is not None:
         output = utils.draw_boxes(image, boxes)
         cv2.imwrite(output_path, output)
         print(f'Output image saved to {output_path}!')
 
+    # If the ground truth is provided, the evaluation process begins.
     if mask_path:
+        # Read de binary mask with ground truth
         mask = cv2.imread(mask_path, cv2.IMREAD_GRAYSCALE)
+        # Initializes the evaluator
+        evaluator = HouseDetectorEvaluator()
+        # Adds ground truth to evaluator
         evaluator.add_gt_mask(mask)
-        ratio = evaluator.evaluate_num_houses(boxes)
-        print(f'Ratio of the number of houses detected: {ratio:.2f}')
 
-        print("Evaluating bounding boxes...")
-        iou_thresholds = [0.5, 0.75, 0.9]
+        # Calculates metrics for a defined score threshold and iou_threshold
+        ratio = evaluator.evaluate_num_houses(boxes)
+        TP, FN, FP = evaluator.confusion_matrix(boxes, 0.5)
+        precision = TP / (TP + FP) if (TP + FP) != 0 else 0
+        recall = TP / (TP + FN) if (TP + FN) != 0 else 0
+        print(f'\nMETRICS FOR SCORE THRESHOLD = {SCORE_THRESHOLD}:')
+        print(f'> Ratio of the number of houses detected: {ratio:.2f}')
+        print(f'> Precision: {precision:.2f}')
+        print(f'> Recall: {recall:.2f}')
+
+        # Calculates de precision-recall curve and Average Precision (AP)
+        # for a list of iou_thresholds
+        iou_thresholds = [0.5]
         for iou in iou_thresholds:
-            AP, AR = evaluator.evaluate_bounding_boxes(boxes, iou_threshold=iou)
+            print(f'\nTHE CALCULATION OF PRECISION-RECALL CURVE BEGINS (IoU = {iou})!')
+            precision, recall = evaluator.precision_recall_curve(detector, image, iou)
+            AP = np.mean(precision)
             print(f'Average Precision (AP) @[ IoU={iou} ] = {AP:.3f}')
-            print(f'Average Recall (AP) @[ IoU={iou} ] = {AR:.3f}')
+            utils.plot_precision_recall_curve(precision, recall)
+        plt.show()
 
 
 if __name__ == "__main__":

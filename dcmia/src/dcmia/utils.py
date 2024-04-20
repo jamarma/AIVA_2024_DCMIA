@@ -2,6 +2,7 @@ import torch
 import numpy as np
 import cv2
 import os
+import matplotlib.pyplot as plt
 
 from torchvision.transforms import v2 as T
 from argparse import ArgumentParser
@@ -105,3 +106,19 @@ def is_valid_output_image(parser: ArgumentParser, arg: str):
     if extension != "png":
         parser.error('The file extension must be .png')
     return arg
+
+
+def plot_precision_recall_curve(precision: np.array, recall: np.array):
+    """
+    Plots the precision-recall curve.
+
+    Parameters:
+        - precision (np.array): precision values.
+        - recall (np.array): recall values.
+    """
+    plt.figure()
+    plt.plot(recall, precision, marker='o', linestyle='-')
+    plt.xlabel('Recall')
+    plt.ylabel('Precision')
+    plt.title('Precision-Recall curve')
+    plt.grid(True)

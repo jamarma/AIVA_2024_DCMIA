@@ -1,5 +1,8 @@
 import cv2
 import numpy as np
+from tqdm import tqdm
+
+from .house_detector import HouseDetector
 
 
 class HouseDetectorEvaluator:
@@ -43,11 +46,10 @@ class HouseDetectorEvaluator:
             return num_detected_boxes / num_mask_boxes
         return 0
 
-    def evaluate_bounding_boxes(self, boxes: np.array, iou_threshold: float):
+    def confusion_matrix(self, boxes: np.array, iou_threshold: float) -> (int, int, int):
         """
-        Evaluates predicted bounding boxes with respect to ground
-        truth using an IoU threshold. Calculates de average
-        precision (AP) and average recall (AR).
+        Calculates the True Positives (TN), False Positives (FP)
+        and False Negatives (FN) using an IoU threshold.
 
         Parameters:
             - boxes (np.array): the predicted bounding boxes.
@@ -55,8 +57,9 @@ class HouseDetectorEvaluator:
             detection as true positive.
 
         Returns:
-            - AP (float): the calculated average precision.
-            - AR (float): the calculated average recall.
+            - TP (int): the number of true positives.
+            - FN (int): the number of false negatives.
+            - FP (int): the number of false positives.
         """
         TP = 0
         FN = 0
@@ -66,7 +69,7 @@ class HouseDetectorEvaluator:
         matched_gt = [False] * self.boxes_gt.shape[0]
 
         # Iterate over all predictions
-        for box in boxes:
+        for box in tqdm(boxes, desc="Calculating confusion matrix"):
             max_iou = 0
             max_iou_index = -1
 
@@ -87,11 +90,29 @@ class HouseDetectorEvaluator:
         # Unmatched elements are considered false negatives
         FN = sum(1 for matched in matched_gt if not matched)
 
-        # Calculates average precision and average recall
-        AP = TP / (TP + FP) if (TP + FP) != 0 else 0
-        AR = TP / (TP + FN) if (TP + FN) != 0 else 0
+        return TP, FN, FP
 
-        return AP, AR
+    def precision_recall_curve(self, detector: HouseDetector, test_image: np.array, iou_threshold: float):
+        """
+        Calculates the precision-recall curve.
+
+        Parameters:
+            - detector (HouseDetector): the house detector.
+            - test_image (np.array): the image where evaluate the house detector.
+            - iou_threshold (float).
+        """
+        score_thresholds = np.linspace(0.8, 0.1, num=8)
+        precision = np.zeros_like(score_thresholds)
+        recall = np.zeros_like(score_thresholds)
+        for i, threshold in enumerate(score_thresholds):
+            print(f'--- Iteration {i}: using score_threshold = {threshold:.2f} ---')
+            boxes, labels, scores = detector.detect(test_image, threshold)
+            TP, FN, FP = self.confusion_matrix(boxes, iou_threshold)
+            print(f'TP = {TP}, FN = {FN}, FP = {FP}')
+            precision[i] = TP / (TP + FP) if (TP + FP) != 0 else 0
+            recall[i] = TP / (TP + FN) if (TP + FN) != 0 else 0
+            print(f'Precision = {precision[i]}, Recall = {recall[i]}')
+        return precision, recall
 
     @staticmethod
     def __calculate_iou(box1: np.array, box2: np.array):
