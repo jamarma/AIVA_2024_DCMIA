@@ -40,20 +40,21 @@ Clonar el repositorio.
 
 ```
 git clone https://github.com/jamarma/AIVA_2024_DCMIA.git
+```
+
+Crea un un _venv_ de Python, e instala la versión de torch y torchvision indicada en [Prerrequisitos](https://github.com/jamarma/AIVA_2024_DCMIA#prerrequisitos).
+
+A continuación, instala el resto de dependencias conforme a los siguientes pasos.
+
+```
 cd AIVA_2024_DCMIA/dcmia
 DCMIA_ROOT=$(pwd)
-```
-
-Instalar dependencias.
-
-```
 pip install -r requirements.txt
 ```
 
 Descargar modelo entrenado de detección de casas.
 ```
-mkdir models
-cd models
+mkdir models; cd models
 gdown https://drive.google.com/uc?id=1lKNUt3BgYel5lC5Hnq88wEF80Qix4Zxy
 ```
 
@@ -61,14 +62,17 @@ Descargar imágenes para probar y evaluar el algoritmo. Esto es un paso opcional
 
 ```
 cd $DCMIA_ROOT
-mkdir -p data/raw
-cd data/raw
+mkdir -p data/raw; cd data/raw
 gdown --folder https://drive.google.com/drive/folders/1PSpBUJ381ENDvrEDP4qCrHzIQJ5rh6sk
 ```
 
 ### Ejecución
 
 Los scripts ejecutables se encuentran en el directorio raiz $DCMIA_ROOT. 
+
+```
+cd $DCMIA_ROOT
+```
 
 #### Inferencia
 
@@ -126,6 +130,7 @@ python build_images_dataset.py
 #### Ejecución del entrenamiento
 
 ```
+cd $DCMIA_ROOT
 python train.py
 ```
 
