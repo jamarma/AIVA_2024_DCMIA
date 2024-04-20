@@ -85,7 +85,13 @@ python main.py --image_path data/raw/test/images/austin1.tif
 Si desea guardar una imagen con el resultado ejecute
 
 ```
-python main.py --image_path data/raw/test/images/austin1.tif --output_path ./output.png
+python main.py --image_path data/raw/test/images/austin1.tif --output_image ./output.png
+```
+
+Si desea guardar un fichero txt con el número de casas detectadas y las coordenadas de los bounding boxes ejecute
+
+```
+python main.py --image_path data/raw/test/images/austin1.tif --output_results ./results.txt
 ```
 
 #### Evaluación
