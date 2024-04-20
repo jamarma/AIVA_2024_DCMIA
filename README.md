@@ -32,7 +32,7 @@ Algoritmo testeado en Ubuntu 22.04:
 * Python 3.10  
 * torch 2.2.1  
 * torchvision 0.17.1  
-* CUDA 12.1
+* CUDA 12.1 (opcional, también compatible con ejecución en CPU)
 
 ### Instalación
 
@@ -166,7 +166,7 @@ python -m unittest -v test_house_detector.py test_prediction_patch_matrix.py tes
 
 Se ha construido una imagen docker que proporciona el despliegue del sistema en un servidor Flask local.
 
-> IMPORTANTE: instalar el paquete [nvidia-container-toolkit](https://docs.docker.com/config/containers/resource_constraints/#gpu) para habilitar el uso de la GPU. Es necesario disponer de una GPU compatible con CUDA 12.1.
+> IMPORTANTE: si deseas habilitar el uso de la GPU es necesario instalar el paquete [nvidia-container-toolkit](https://docs.docker.com/config/containers/resource_constraints/#gpu) y disponer de una GPU compatible con CUDA 12.1. Sin embargo, esto no es un paso necesario, el sistema también está preparado para correr en CPU.
 
 Descarga la imagen
 
