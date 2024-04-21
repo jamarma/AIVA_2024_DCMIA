@@ -103,7 +103,7 @@ class ObjectDetector(ABC):
             - filename (str): Name of the file to load.
         """
         path = os.path.join(constants.MODELS_PATH, filename)
-        self.model.load_state_dict(torch.load(path))
+        self.model.load_state_dict(torch.load(path, map_location=torch.device(self.device)))
         self.model.eval()
 
     @staticmethod
