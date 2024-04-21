@@ -26,7 +26,7 @@ def process_image():
 
         # House detection
         detector = HouseDetector(model_filename='model1_fcos5.pth')
-        boxes, labels, scores = detector.detect(image)
+        boxes, labels, scores = detector.detect(image, threshold=0.5)
         output = utils.draw_boxes(image, boxes)
 
         # Saves image in png format to media dir
