@@ -42,7 +42,7 @@ Clonar el repositorio.
 git clone https://github.com/jamarma/AIVA_2024_DCMIA.git
 ```
 
-Crea un un _venv_ de Python, e instala la versión de torch y torchvision indicada en [Prerrequisitos](https://github.com/jamarma/AIVA_2024_DCMIA#prerrequisitos).
+Crea un _venv_ de Python e instala la versión de **torch** y **torchvision** indicada en [Prerrequisitos](https://github.com/jamarma/AIVA_2024_DCMIA#prerrequisitos).
 
 A continuación, instala el resto de dependencias conforme a los siguientes pasos.
 
