@@ -25,7 +25,7 @@ class TestHouseDetector(unittest.TestCase):
         step_size = 400
 
         # Call the detect method
-        self.boxes_arr, self.labels_arr, self.scores_arr = self.house_detector.detect(self.image, window_size, step_size)
+        self.boxes_arr, self.labels_arr, self.scores_arr = self.house_detector.detect(self.image, 0.5, window_size, step_size)
 
     def test_detect_check_format(self):
         # Ensure the arrays are correct
