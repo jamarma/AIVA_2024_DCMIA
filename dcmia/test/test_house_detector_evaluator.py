@@ -37,9 +37,10 @@ class TestEvaluator(unittest.TestCase):
 
     def test_evaluate_bounding_boxes(self):
         self.evaluator.add_gt_mask(self.mask)
-        AP, AR = self.evaluator.evaluate_bounding_boxes(self.boxes, 0.5)
-        self.assertAlmostEqual(AP, 0.25)
-        self.assertAlmostEqual(AR, 0.25)
+        TP, FN, FP = self.evaluator.confusion_matrix(self.boxes, 0.5)
+        self.assertAlmostEqual(TP, 1)
+        self.assertAlmostEqual(FN, 3)
+        self.assertAlmostEqual(FP, 3)
 
 
 if __name__ == '__main__':
