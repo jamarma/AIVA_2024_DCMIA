@@ -175,6 +175,7 @@ docker pull jamarma/dcmia-app:latest
 ```
 
 Lanza el contenedor con el servidor
+> Si vas a ejecutar el docker sin aceleración por GPU no uses el parámetro `--gpus all`
 
 ```
 docker run --rm --gpus all -p 5000:5000 jamarma/dcmia-app
