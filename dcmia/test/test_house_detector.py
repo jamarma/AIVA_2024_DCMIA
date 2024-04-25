@@ -4,7 +4,7 @@ import numpy as np
 import sys
 sys.path.append('../')
 
-from dcmia.src.dcmia.house_detector import HouseDetector
+from src.dcmia.house_detector import HouseDetector
 
 
 class TestHouseDetector(unittest.TestCase):
